@@ -16,7 +16,7 @@ export default function TabLayout() {
 
       <Tabs.Screen
         name="mais"
-        options={{ title: "Mais" }}
+        options={{ title: "Lembretes" }}
       />
 
     </Tabs>

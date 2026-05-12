@@ -15,7 +15,9 @@ export default function Perfil() {
         <Text style={styles.logoSubtitle}>Gestão de Contratos</Text>
       </View>
 
-    </View><View style={styles.screen}>
+    </View>
+    
+    <View style={styles.screen}>
 
         <ScrollView contentContainerStyle={styles.container}>
 
@@ -153,25 +155,6 @@ export default function Perfil() {
 
         </ScrollView>
 
-        <View style={styles.navbar}>
-
-          <TouchableOpacity style={styles.navItem}>
-            <Entypo name="home" size={30} color="#006C5B" />
-            <Text style={styles.navText}>Home</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.navItem}>
-            <Entypo name="folder" size={30} color="#006C5B" />
-            <Text style={styles.navText}>Contratos</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.navItem}>
-            <Entypo name="dots-three-horizontal" size={30} color="#006C5B" />
-            <Text style={styles.navText}>Mais</Text>
-          </TouchableOpacity>
-
-        </View>
-
       </View></>
   );
 }
@@ -187,7 +170,7 @@ const styles = StyleSheet.create({
   justifyContent: 'flex-start',
 
   paddingHorizontal: 25,
-  paddingTop: 30,
+  paddingTop: 60,
   paddingBottom: 25,
 },
 
@@ -204,30 +187,6 @@ logoText: {
 logoSubtitle: {
   color: 'white',
   fontSize: 16,
-},
-
-  navbar: {
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-
-  flexDirection: 'row',
-  justifyContent: 'space-around',
-  alignItems: 'center',
-
-  backgroundColor: '#d9e7e2',
-  paddingVertical:20
-},
-
-navItem: {
-  alignItems: 'center',
-  justifyContent: 'center',
-},
-
-navText: {
-  fontSize: 12,
-  color: '#006C5B',
 },
 
 screen: {

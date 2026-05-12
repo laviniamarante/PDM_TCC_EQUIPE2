@@ -1,25 +1,27 @@
 import Entypo from "@expo/vector-icons/Entypo";
-import { Text, TouchableOpacity, View, StyleSheet} from "react-native";
-
+''
+import { Text, View, StyleSheet, TouchableOpacity} from "react-native";
 
 export default () => {
     return (
         <View>
-            <View style={styles.NavBarCima}>
+           <View style={styles.NavBarCima}>
                <TouchableOpacity>
                <Entypo name="menu" size={32} color="white" />
                </TouchableOpacity>
-            <View style={styles.logoArea}> 
-                <Text style={styles.TextoNav}>Contratos</Text> 
+            <View style= {styles.logoArea}> 
+                <Text style = {styles.TextoNav}>Lembretes</Text> 
                 <Text style={styles.SubtitleNav}>GerencIF</Text>
+                
             </View>
-            </View>
+           </View>
+            
         </View>
+       
     );   
 }
 
 const styles = StyleSheet.create({
-
     NavBarCima: {
     backgroundColor: '#006C5B',
     width: '100%',
@@ -39,12 +41,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     },
 
-    logoArea:{
-     marginLeft: 20,
-    },
     SubtitleNav: {
     color: 'white',
     fontSize: 16,
-     },
-
+    },
+    
+    logoArea:{
+     marginLeft: 20,
+    },
 })
