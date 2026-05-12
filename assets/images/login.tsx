@@ -54,7 +54,7 @@ export default function Home() {
 
        <TouchableOpacity
        style={styles.button}
-       onPress={() => router.replace("/tabs/home")}
+       onPress={() => router.replace("/(tabs)/home")}
        >
        <Text style={styles.buttonText}>Entrar</Text>
        </TouchableOpacity>
