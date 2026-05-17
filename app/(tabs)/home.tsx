@@ -1,201 +1,160 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Entypo from '@expo/vector-icons/Entypo';
 
 export default function Perfil() {
+
+  const contratos = [
+    {
+      id: '1',
+      titulo: 'Serviços de Limpeza e Conservação',
+      fornecedor: 'Limpeza Total Serviços',
+      vencimento: '12/07/2026',
+      status: 'Ativo',
+    },
+    {
+      id: '2',
+      titulo: 'Fornecimento de materiais de escritório',
+      fornecedor: 'Papelaria Central Ltda',
+      vencimento: '15/08/2026',
+      status: 'Vencido',
+    },
+    {
+      id: '3',
+      titulo: 'Fornecimento de Equipamentos de Laboratório',
+      fornecedor: 'Laboratórios Avançados S.A.',
+      vencimento: '20/09/2026',
+      status: 'Ativo',
+    },
+    {
+      id: '4',
+      titulo: 'Serviço de Alimentação',
+      fornecedor: 'Vale Verde Alimentação',
+      vencimento: '20/11/2026',
+      status: 'Pendente',
+    },
+  ];
+
+  function renderStatus(status: string) {
+    if (status === 'Ativo') {
+      return styles.statusAtivo;
+    }
+
+    if (status === 'Vencido') {
+      return styles.statusVencido;
+    }
+
+    return styles.statusPendente;
+  }
   return (
+    <>
+      <View style={styles.topNavbar}>
 
-    <><View style={styles.topNavbar}>
+        <TouchableOpacity>
+          <Entypo name="menu" size={32} color="white" />
+        </TouchableOpacity>
 
-      <TouchableOpacity>
-        <Entypo name="menu" size={32} color="white" />
-      </TouchableOpacity>
+        <View style={styles.logoArea}>
+          <Text style={styles.logoText}>GerencIF</Text>
+          <Text style={styles.logoSubtitle}>Gestão de Contratos</Text>
+        </View>
 
-      <View style={styles.logoArea}>
-        <Text style={styles.logoText}>GerencIF</Text>
-        <Text style={styles.logoSubtitle}>Gestão de Contratos</Text>
       </View>
 
-    </View>
-    
-    <View style={styles.screen}>
+      <View style={styles.screen}>
 
-        <ScrollView contentContainerStyle={styles.container}>
+        <FlatList
+          data={contratos}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.container}
 
-          <Text style={styles.title}>
-            Contratos Recentes
-          </Text>
-
-          <Text style={styles.subtitle}>
-            Últimos contratos cadastrados no sistema
-          </Text>
-
-          {/* card1 */}
-          <View style={styles.card}>
-
-            <View style={styles.topCard}>
-
-              <Text style={styles.cardText}>
-                Serviços de Limpeza e Conservação
+          ListHeaderComponent={
+            <>
+              <Text style={styles.title}>
+                Contratos Recentes
               </Text>
 
-              <View style={styles.statusAtivo}>
-                <Text style={styles.statusText}>Ativo</Text>
+              <Text style={styles.subtitle}>
+                Últimos contratos cadastrados no sistema
+              </Text>
+            </>
+          }
+
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+
+              <View style={styles.topCard}>
+
+                <Text style={styles.cardText}>
+                  {item.titulo}
+                </Text>
+
+                <View style={renderStatus(item.status)}>
+                  <Text style={styles.statusText}>
+                    {item.status}
+                  </Text>
+                </View>
+
               </View>
 
-            </View>
-
-            <Text style={styles.cardSubtitle}>
-              Fornecedor: Limpeza Total Serviços
-            </Text>
-
-            <Text style={styles.cardSubtitle}>
-              Vencimento: 12/07/2026
-            </Text>
-
-            <TouchableOpacity style={styles.detalhes}>
-              <Text style={styles.detalhesText}>
-                Ver detalhes
-              </Text>
-            </TouchableOpacity>
-
-          </View>
-
-          {/* CARD 2 */}
-          <View style={styles.card}>
-
-            <View style={styles.topCard}>
-
-              <Text style={styles.cardText}>
-                Fornecimento de materiais de escritório
+              <Text style={styles.cardSubtitle}>
+                Fornecedor: {item.fornecedor}
               </Text>
 
-              <View style={styles.statusVencido}>
-                <Text style={styles.statusText}>Vencido</Text>
-              </View>
+              <Text style={styles.cardSubtitle}>
+                Vencimento: {item.vencimento}
+              </Text>
+
+              <TouchableOpacity style={styles.detalhes}>
+                <Text style={styles.detalhesText}>
+                  Ver detalhes
+                </Text>
+              </TouchableOpacity>
 
             </View>
+          )}
+        />
 
-            <Text style={styles.cardSubtitle}>
-              Fornecedor: Papelaria Central Ltda
-            </Text>
-
-            <Text style={styles.cardSubtitle}>
-              Vencimento: 15/08/2026
-            </Text>
-
-            <TouchableOpacity style={styles.detalhes}>
-              <Text style={styles.detalhesText}>
-                Ver detalhes
-              </Text>
-            </TouchableOpacity>
-
-          </View>
-
-          {/* CARD 3 */}
-          <View style={styles.card}>
-
-            <View style={styles.topCard}>
-
-              <Text style={styles.cardText}>
-                Fornecimento de Equipamentos de Laboratório
-              </Text>
-
-              <View style={styles.statusAtivo}>
-                <Text style={styles.statusText}>Ativo</Text>
-              </View>
-
-            </View>
-
-            <Text style={styles.cardSubtitle}>
-              Fornecedor: Laboratórios Avançados S.A.
-            </Text>
-
-            <Text style={styles.cardSubtitle}>
-              Vencimento: 20/09/2026
-            </Text>
-
-            <TouchableOpacity style={styles.detalhes}>
-              <Text style={styles.detalhesText}>
-                Ver detalhes
-              </Text>
-            </TouchableOpacity>
-
-          </View>
-
-          {/* CARD 4 */}
-          <View style={styles.card}>
-
-            <View style={styles.topCard}>
-
-              <Text style={styles.cardText}>
-                Serviço de Alimentação
-              </Text>
-
-              <View style={styles.statusPendente}>
-                <Text style={styles.statusText}>Pendente</Text>
-              </View>
-
-            </View>
-
-            <Text style={styles.cardSubtitle}>
-              Fornecedor: Vale Verde Alimentação
-            </Text>
-
-            <Text style={styles.cardSubtitle}>
-              Vencimento: 20/11/2026
-            </Text>
-
-            <TouchableOpacity style={styles.detalhes}>
-              <Text style={styles.detalhesText}>
-                Ver detalhes
-              </Text>
-            </TouchableOpacity>
-
-          </View>
-
-        </ScrollView>
-
-      </View></>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
 
   topNavbar: {
-  backgroundColor: '#006C5B',
-  width: '100%',
+    backgroundColor: '#006C5B',
+    width: '100%',
 
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
 
-  paddingHorizontal: 25,
-  paddingTop: 60,
-  paddingBottom: 25,
-},
+    paddingHorizontal: 25,
+    paddingTop: 60,
+    paddingBottom: 25,
+  },
 
-logoArea: {
-  marginLeft: 20,
-},
+  logoArea: {
+    marginLeft: 20,
+  },
 
-logoText: {
-  color: 'white',
-  fontSize: 25,
-  fontWeight: 'bold',
-},
+  logoText: {
+    color: 'white',
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
 
-logoSubtitle: {
-  color: 'white',
-  fontSize: 16,
-},
+  logoSubtitle: {
+    color: 'white',
+    fontSize: 16,
+  },
 
-screen: {
-  flex: 1,
-},
+  screen: {
+    flex: 1,
+  },
 
   container: {
     paddingBottom: 120,
-    flexGrow: 1,
     padding: 20,
     paddingTop: 20,
   },
@@ -258,7 +217,7 @@ screen: {
     paddingVertical: 5,
     paddingHorizontal: 12,
     borderRadius: 5,
-    marginTop: -10, 
+    marginTop: -10,
   },
 
   statusText: {
