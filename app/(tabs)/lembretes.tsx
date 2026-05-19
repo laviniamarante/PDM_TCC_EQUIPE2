@@ -4,6 +4,8 @@ import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerActions } from '@react-navigation/native';
 
 import {
   Text,
@@ -15,6 +17,7 @@ import {
 
 export default function Lembretes() {
 
+  const navigation = useNavigation();
   const [filtro, setFiltro] = useState('todos');
 
   const lembretes = [
@@ -106,9 +109,10 @@ export default function Lembretes() {
 
       <View style={styles.NavBarCima}>
 
-        <TouchableOpacity>
-          <Entypo name="menu" size={32} color="white" />
-        </TouchableOpacity>
+        <TouchableOpacity
+                onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+                <Entypo name="menu" size={32} color="white" />
+                </TouchableOpacity>
 
         <View style={styles.logoArea}>
           <Text style={styles.TextoNav}>Lembretes</Text>

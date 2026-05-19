@@ -31,14 +31,6 @@ export default function RootLayout() {
         }}
       />
 
-          <Drawer.Screen
-        name="configuracoes"
-        options={{
-          drawerLabel: "Configurações",
-          title: "Configurações",
-        }}
-      />
-
         <Drawer.Screen
         name="detalhesContrato"
         options={{
@@ -52,6 +44,13 @@ export default function RootLayout() {
           title: "Contratos",
         }}
       />
+        <Drawer.Screen
+      name="configuracoes"
+      options={{
+        drawerLabel: "Configurações",
+        title: "Configurações",
+      }}
+    />
     </Drawer>
   );
 }
