@@ -1,7 +1,10 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Entypo from '@expo/vector-icons/Entypo';
+import { DrawerActions } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { router } from "expo-router";
 
-export default function Perfil() {
+export default function Home() {
 
   const contratos = [
     {
@@ -44,14 +47,16 @@ export default function Perfil() {
     }
 
     return styles.statusPendente;
-  }
+
+  }   const navigation = useNavigation();
   return (
     <>
       <View style={styles.topNavbar}>
 
-        <TouchableOpacity>
-          <Entypo name="menu" size={32} color="white" />
-        </TouchableOpacity>
+        <TouchableOpacity
+        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+        <Entypo name="menu" size={32} color="white" />
+       </TouchableOpacity>
 
         <View style={styles.logoArea}>
           <Text style={styles.logoText}>GerencIF</Text>
@@ -104,11 +109,22 @@ export default function Perfil() {
                 Vencimento: {item.vencimento}
               </Text>
 
-              <TouchableOpacity style={styles.detalhes}>
-                <Text style={styles.detalhesText}>
-                  Ver detalhes
-                </Text>
-              </TouchableOpacity>
+           
+          <TouchableOpacity
+            style={styles.detalhes}
+            onPress={() =>
+              router.push({
+                pathname: "/detalhesContrato",
+                params: {
+                  id: item.id,
+                },
+              })
+            }
+          >
+            <Text style={styles.detalhesText}>
+              Ver detalhes
+            </Text>
+          </TouchableOpacity>
 
             </View>
           )}

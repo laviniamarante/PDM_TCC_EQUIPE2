@@ -59,9 +59,6 @@ export default function Home() {
        <Text style={styles.buttonText}>Entrar</Text>
        </TouchableOpacity>
 
-        <Text style={styles.footer}>
-          Não tem uma conta? <Text style={styles.link}>Crie uma conta</Text>
-        </Text>
 
       </View>
     </View>
@@ -124,10 +121,7 @@ input: {
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  footer: {
-    textAlign: 'center',
-    marginTop: 15,
-  },
+  
  inputContainer: {
   flexDirection: 'row',
   alignItems: 'center',
