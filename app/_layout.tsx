@@ -43,6 +43,13 @@ export default function RootLayout() {
         name="detalhesContrato"
         options={{
           drawerItemStyle: { display: 'none' },
+        }}/>
+
+        <Drawer.Screen
+        name="contratos"
+        options={{
+          drawerLabel: "Contratos",
+          title: "Contratos",
         }}
       />
     </Drawer>
