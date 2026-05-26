@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#006C5B',
     textAlign: 'center',
-    marginTop: 60
+    marginTop: 85,
   },
 
   subtitle: {

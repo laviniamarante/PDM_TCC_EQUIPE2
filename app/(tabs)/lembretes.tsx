@@ -1,11 +1,11 @@
 import { useState } from "react";
-
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
+import { lembretes, Lembrete } from '../../dados/lembrete';
 
 import {
   Text,
@@ -18,73 +18,31 @@ import {
 export default function Lembretes() {
 
   const navigation = useNavigation();
-  const [filtro, setFiltro] = useState('todos');
 
-  const lembretes = [
-    {
-      id: "1",
-      titulo: "Contrato próximo do vencimento",
-      subtitulo: "O contrato 010/2024 vence em 5 dias",
-      tipo: "pendente",
-      tempo: "há 5 minutos",
-    },
+  const [filtro, setFiltro] = useState<
+    'todos' | Lembrete['tipo']
+  >('todos');
 
-    {
-      id: "2",
-      titulo: "Pagamento atrasado!",
-      subtitulo: "O pagamento do contrato 009 está atrasado",
-      tipo: "vencido",
-      tempo: "há 1 hora",
-    },
-
-    {
-      id: "3",
-      titulo: "Novo contrato ativo",
-      subtitulo: "O contrato 001/2026 foi cadastrado",
-      tipo: "ativo",
-      tempo: "ontem",
-    },
-
-    {
-      id: "4",
-      titulo: "Contrato próximo do vencimento",
-      subtitulo: "O contrato 002/2024 vence em 10 dias",
-      tipo: "pendente",
-      tempo: "há 2 horas",
-    },
-
-    {
-      id: "5",
-      titulo: "Pagamento atrasado!",
-      subtitulo: "O pagamento do contrato 003 está atrasado",
-      tipo: "vencido",
-      tempo: "há 3 horas",
-    },
-
-    {
-      id: "6",
-      titulo: "Novo contrato ativo",
-      subtitulo: "O contrato 004/2026 foi cadastrado",
-      tipo: "ativo",
-      tempo: "há 2 dias",
-    }
-  ];
-
-  const lembretesFiltrados = lembretes.filter((item) => {
+  const lembretesFiltrados = lembretes.filter((item: Lembrete) => {
 
     if (filtro === 'todos') {
       return true;
     }
 
     return item.tipo === filtro;
+
   });
 
-  function renderIcone(tipo: string) {
+  function renderIcone(tipo: Lembrete['tipo']) {
 
     if (tipo === 'vencido') {
       return (
         <View style={styles.iconeVermelho}>
-          <AntDesign name="close-circle" size={22} color="white" />
+          <AntDesign
+            name="close-circle"
+            size={22}
+            color="white"
+          />
         </View>
       );
     }
@@ -92,16 +50,25 @@ export default function Lembretes() {
     if (tipo === 'pendente') {
       return (
         <View style={styles.iconeAmarelo}>
-          <MaterialIcons name="warning" size={24} color="white" />
+          <MaterialIcons
+            name="warning"
+            size={24}
+            color="white"
+          />
         </View>
       );
     }
 
     return (
       <View style={styles.iconeVerde}>
-        <Feather name="check-circle" size={22} color="white" />
+        <Feather
+          name="check-circle"
+          size={22}
+          color="white"
+        />
       </View>
     );
+
   }
 
   return (
@@ -157,7 +124,7 @@ export default function Lembretes() {
         data={lembretesFiltrados}
         keyExtractor={(item) => item.id}
 
-        renderItem={({ item }) => (
+        renderItem={({ item }: { item: Lembrete }) => (
           <View style={styles.card}>
 
             {renderIcone(item.tipo)}

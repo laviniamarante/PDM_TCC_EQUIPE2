@@ -1,43 +1,15 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Entypo from '@expo/vector-icons/Entypo';
-import { DrawerActions } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { router } from "expo-router";
+import { contratos, Contrato } from '../../dados/home';
 
 export default function Home() {
 
-  const contratos = [
-    {
-      id: '1',
-      titulo: 'Serviços de Limpeza e Conservação',
-      fornecedor: 'Limpeza Total Serviços',
-      vencimento: '12/07/2026',
-      status: 'Ativo',
-    },
-    {
-      id: '2',
-      titulo: 'Fornecimento de materiais de escritório',
-      fornecedor: 'Papelaria Central Ltda',
-      vencimento: '15/08/2026',
-      status: 'Vencido',
-    },
-    {
-      id: '3',
-      titulo: 'Fornecimento de Equipamentos de Laboratório',
-      fornecedor: 'Laboratórios Avançados S.A.',
-      vencimento: '20/09/2026',
-      status: 'Ativo',
-    },
-    {
-      id: '4',
-      titulo: 'Serviço de Alimentação',
-      fornecedor: 'Vale Verde Alimentação',
-      vencimento: '20/11/2026',
-      status: 'Pendente',
-    },
-  ];
+  const navigation = useNavigation();
 
-  function renderStatus(status: string) {
+  function renderStatus(status: Contrato['status']) {
+
     if (status === 'Ativo') {
       return styles.statusAtivo;
     }
@@ -48,19 +20,25 @@ export default function Home() {
 
     return styles.statusPendente;
 
-  }   const navigation = useNavigation();
+  }
+
   return (
     <>
       <View style={styles.topNavbar}>
 
         <TouchableOpacity
-        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-        <Entypo name="menu" size={32} color="white" />
-       </TouchableOpacity>
+          onPress={() =>
+            navigation.dispatch(DrawerActions.openDrawer())
+          }
+        >
+          <Entypo name="menu" size={32} color="white" />
+        </TouchableOpacity>
 
         <View style={styles.logoArea}>
           <Text style={styles.logoText}>GerencIF</Text>
-          <Text style={styles.logoSubtitle}>Gestão de Contratos</Text>
+          <Text style={styles.logoSubtitle}>
+            Gestão de Contratos
+          </Text>
         </View>
 
       </View>
@@ -84,7 +62,8 @@ export default function Home() {
             </>
           }
 
-          renderItem={({ item }) => (
+          renderItem={({ item }: { item: Contrato }) => (
+
             <View style={styles.card}>
 
               <View style={styles.topCard}>
@@ -109,30 +88,35 @@ export default function Home() {
                 Vencimento: {item.vencimento}
               </Text>
 
-           
-          <TouchableOpacity
-            style={styles.detalhes}
-            onPress={() =>
-              router.push({
-                pathname: "/detalhesContrato",
-                params: {
-                  id: item.id,
-                },
-              })
-            }
-          >
-            <Text style={styles.detalhesText}>
-              Ver detalhes
-            </Text>
-          </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.detalhes}
+                onPress={() =>
+                  router.push({
+                    pathname: "/detalhesContrato",
+                    params: {
+                      id: item.id,
+                    },
+                  })
+                }
+              >
+
+                <Text style={styles.detalhesText}>
+                  Ver detalhes
+                </Text>
+
+              </TouchableOpacity>
 
             </View>
+
           )}
+
         />
 
       </View>
+
     </>
   );
+
 }
 
 const styles = StyleSheet.create({
