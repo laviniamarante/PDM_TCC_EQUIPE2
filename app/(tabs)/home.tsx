@@ -46,9 +46,9 @@ export default function Home() {
       <View style={styles.screen}>
 
         <FlatList
-          data={contratos}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.container}
+         data={contratos} 
+         keyExtractor={(item, index) => index.toString()} 
+         contentContainerStyle={styles.container}
 
           ListHeaderComponent={
             <>
@@ -82,6 +82,10 @@ export default function Home() {
 
               <Text style={styles.cardSubtitle}>
                 Fornecedor: {item.fornecedor}
+              </Text>
+
+              <Text style={styles.cardSubtitle}>
+                Início: {item.inicio}
               </Text>
 
               <Text style={styles.cardSubtitle}>
@@ -175,7 +179,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
-    height: 200,
+    height: 210,
     marginBottom: 15,
   },
 

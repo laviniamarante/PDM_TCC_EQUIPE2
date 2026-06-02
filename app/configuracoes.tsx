@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View, StyleSheet} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
 
-export default function Contratos() {
+export default function Configuracoes() {
     const navigation = useNavigation();
     return (
         <View>
@@ -13,7 +13,7 @@ export default function Contratos() {
                 <Entypo name="menu" size={32} color="white" />
                 </TouchableOpacity>
             <View style={styles.logoArea}> 
-                <Text style={styles.TextoNav}>Contratos</Text> 
+                <Text style={styles.TextoNav}>Configurações </Text> 
                 <Text style={styles.SubtitleNav}>GerencIF</Text>
             </View>
             </View>
