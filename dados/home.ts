@@ -43,8 +43,8 @@ export const contratos: Contrato[] = [
   {
     id: 3,
     titulo: 'Fornecimento de Equipamentos de Laboratório',
-    fornecedor: 'Laboratórios Avançados S.A.',
-    inicio: '20/09/2023',
+    fornecedor:'Laboratórios Avançados S.A.',
+    inicio:'20/09/2023',
     vencimento: '20/09/2026',
     status: 'Ativo',
     numeroContrato: 'CTR-003',

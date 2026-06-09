@@ -1,7 +1,9 @@
-import Entypo from "@expo/vector-icons/Entypo";
 import { Text, TouchableOpacity, View, StyleSheet} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
+import Entypo from "@expo/vector-icons/Entypo";
+import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 export default function Configuracoes() {
     const navigation = useNavigation();
@@ -17,6 +19,11 @@ export default function Configuracoes() {
                 <Text style={styles.SubtitleNav}>GerencIF</Text>
             </View>
             </View>
+          <TouchableOpacity style={styles.card} onPress={() => router.replace('/login')}>
+        <Feather name="log-out" size={20} color="#000" />
+        <Text style={styles.cardText}>Sair</Text>
+      </TouchableOpacity>
+
         </View>
     );   
 }
@@ -47,5 +54,23 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
      },
+
+     card: {
+       alignItems: 'center',
+       paddingVertical: 16,
+       paddingHorizontal: 20,
+       width: '100%',
+       borderBottomWidth: 1,
+       borderBottomColor: '#ccc',
+       backgroundColor: '#f5f5f5',
+       flexDirection: 'row',
+       
+},
+
+cardText: {
+  marginLeft: 10,
+  fontSize: 16,
+},
+
 
 })

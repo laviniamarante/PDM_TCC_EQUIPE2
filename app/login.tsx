@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import Fontisto from '@expo/vector-icons/Fontisto';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-export default function Home() {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 

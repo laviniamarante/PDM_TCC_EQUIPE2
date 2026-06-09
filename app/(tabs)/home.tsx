@@ -179,25 +179,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
-    height: 210,
     marginBottom: 15,
   },
-
+   
   topCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
-  cardText: {
-    fontSize: 16,
-    width: '75%',
-  },
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+},
+ 
+cardText: {
+  fontSize: 16,
+  flex: 1,
+  marginRight: 10,
+  fontWeight: '600',
+},
 
   cardSubtitle: {
     fontSize: 16,
     color: 'gray',
     marginTop: 7,
+    
   },
 
   statusAtivo: {
@@ -206,6 +208,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     borderRadius: 5,
     marginTop: -10,
+    flexShrink: 0,
   },
 
   statusVencido: {
@@ -214,6 +217,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 5,
     marginTop: -10,
+     flexShrink: 0,
   },
 
   statusPendente: {
@@ -222,6 +226,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 5,
     marginTop: -10,
+    flexShrink: 0,
   },
 
   statusText: {
@@ -230,14 +235,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  detalhes: {
-    backgroundColor: '#add8d1',
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    marginTop: 'auto',
-    marginBottom: -10,
-  },
+ detalhes: {
+  backgroundColor: '#add8d1',
+  paddingVertical: 5,
+  paddingHorizontal: 15,
+  borderRadius: 8,
+  marginTop: 15,
+},
 
   detalhesText: {
     fontSize: 16,
