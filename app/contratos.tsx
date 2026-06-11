@@ -6,34 +6,46 @@ import {
   View,
   StyleSheet,
   TextInput,
+  FlatList,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { DrawerActions } from "@react-navigation/native";
+import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { useState } from "react";
+import { contratos } from "../dados/home";
 
 export default function Contratos() {
   const navigation = useNavigation();
   const [busca, setBusca] = useState("");
 
+  const contratosFiltrados = contratos.filter((contrato) =>
+    contrato.titulo.toLowerCase().includes(busca.toLowerCase()) ||
+    contrato.fornecedor.toLowerCase().includes(busca.toLowerCase()) ||
+    contrato.numeroContrato.toLowerCase().includes(busca.toLowerCase())
+  );
+
   return (
-    <View>
+    <View style={styles.containerTela}>
       <View style={styles.NavBarCima}>
         <TouchableOpacity
           onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
         >
           <Entypo name="menu" size={32} color="white" />
         </TouchableOpacity>
+
         <View style={styles.logoArea}>
           <Text style={styles.TextoNav}>Contratos</Text>
           <Text style={styles.SubtitleNav}>GerencIF</Text>
         </View>
       </View>
 
-
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
-          <Ionicons name="search-outline" size={20} color="#888" style={styles.searchIcon}
+          <Ionicons
+            name="search-outline"
+            size={20}
+            color="#888"
+            style={styles.searchIcon}
           />
+
           <TextInput
             style={styles.searchInput}
             placeholder="Pesquisar contratos..."
@@ -42,6 +54,7 @@ export default function Contratos() {
             onChangeText={setBusca}
             returnKeyType="search"
           />
+
           {busca.length > 0 && (
             <TouchableOpacity onPress={() => setBusca("")}>
               <Ionicons name="close-circle" size={18} color="#aaa" />
@@ -49,11 +62,46 @@ export default function Contratos() {
           )}
         </View>
       </View>
+
+      <FlatList
+        data={contratosFiltrados}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.lista}
+        ListEmptyComponent={
+          <Text style={styles.semResultados}>
+            Nenhum contrato encontrado.
+          </Text>
+        }
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text style={styles.cardTitulo}>
+              {item.titulo}
+            </Text>
+
+            <Text style={styles.cardTexto}>
+              Fornecedor: {item.fornecedor}
+            </Text>
+
+            <Text style={styles.cardTexto}>
+              Contrato: {item.numeroContrato}
+            </Text>
+
+            <Text style={styles.cardTexto}>
+              Status: {item.status}
+            </Text>
+          </View>
+        )}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  containerTela: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+  },
+
   NavBarCima: {
     backgroundColor: "#006C5B",
     width: "100%",
@@ -81,7 +129,6 @@ const styles = StyleSheet.create({
   },
 
   searchContainer: {
-    backgroundColor: "#f5f5f5",
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -92,7 +139,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: "#e0e0e0",
     shadowColor: "#000",
@@ -110,6 +157,36 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     color: "#333",
-    paddingVertical: 0,
+  },
+
+  lista: {
+    paddingHorizontal: 16,
+    paddingBottom: 30,
+  },
+
+  card: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 12,
+  },
+
+  cardTitulo: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+
+  cardTexto: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 4,
+  },
+
+  semResultados: {
+    textAlign: "center",
+    marginTop: 30,
+    color: "#666",
+    fontSize: 16,
   },
 });

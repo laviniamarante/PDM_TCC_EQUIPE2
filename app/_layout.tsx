@@ -12,8 +12,8 @@ export default function RootLayout() {
       <Drawer.Screen
         name="(tabs)"
         options={{
-          drawerLabel: "Início",
-          title: "Início",
+          drawerLabel: "Home",
+          title: "Home",
         }}
       />
 
@@ -51,6 +51,16 @@ export default function RootLayout() {
         title: "Configurações",
       }}
     />
+
+      <Drawer.Screen
+      name="agenda"
+      options={{
+      drawerLabel: "Agenda",
+      title: "Agenda",
+      }}
+/>
     </Drawer>
+
+    
   );
 }
