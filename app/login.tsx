@@ -1,6 +1,6 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useState } from 'react';
-import { router } from "expo-router";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import { router } from 'expo-router';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
@@ -11,55 +11,67 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        
         <Text style={styles.title}>GerencIF</Text>
+
         <Text style={styles.subtitle}>
           Sistema de Gerenciamento de Contratos do IFPB Campus Esperança
         </Text>
 
-     <Text style={styles.label}>Email</Text>
-     <View style={styles.inputContainer}>
+        <Text style={styles.label}>Email</Text>
 
-  <Fontisto name="email" size={25} color="#006C5B" />
+        <View style={styles.inputContainer}>
+          <Fontisto
+            name="email"
+            size={25}
+            color="#006C5B"
+          />
 
-  <TextInput
-    style={styles.input}
-    placeholder="Digite seu email..."
-    value={email}
-    onChangeText={setEmail}
-  />
-
-</View>
-
-       <Text style={styles.label}>Senha</Text>
-
-<View style={styles.inputContainer}>
-
-  <AntDesign name="lock" size={25} color="#006C5B" />
-
-  <TextInput
-    style={styles.input}
-    placeholder="Digite sua senha..."
-    secureTextEntry={true}
-    value={senha}
-    onChangeText={setSenha}
-  />
-
-</View>
-
-        <View style={styles.row}>
-          <Text>Lembrar-me</Text>
-          <Text style={styles.link}>Esqueci minha senha</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite seu email..."
+            value={email}
+            onChangeText={setEmail}
+          />
         </View>
 
-       <TouchableOpacity
-       style={styles.button}
-       onPress={() => router.replace("/(tabs)/home")}
-       >
-       <Text style={styles.buttonText}>Entrar</Text>
-       </TouchableOpacity>
+        <Text style={styles.label}>Senha</Text>
 
+        <View style={styles.inputContainer}>
+          <AntDesign
+            name="lock"
+            size={25}
+            color="#006C5B"
+          />
 
+          <TextInput
+            style={styles.input}
+            placeholder="Digite sua senha..."
+            secureTextEntry
+            value={senha}
+            onChangeText={setSenha}
+          />
+        </View>
+
+        <View style={styles.row}>
+          <TouchableOpacity>
+            <Text>Lembrar-me</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.link}>
+              Esqueci minha senha
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.replace('/(tabs)/home')}
+        >
+          <Text style={styles.buttonText}>
+            Entrar
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -72,65 +84,75 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   card: {
     width: '85%',
+    height: '80%',
     backgroundColor: '#fff',
     borderRadius: 20,
     borderWidth: 0.7,
     borderColor: '#bebcbc',
-    height: '80%',
-    padding: 30
+    padding: 30,
   },
+
   title: {
+    marginTop: 85,
     fontSize: 28,
     fontWeight: 'bold',
     color: '#006C5B',
     textAlign: 'center',
-    marginTop: 85,
   },
 
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    marginBottom: 50
+    marginBottom: 50,
   },
+
   label: {
     marginTop: 25,
     fontWeight: '600',
   },
-input: {
-  flex: 1,
-  padding: 12,
-},
+
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+  },
+
+  input: {
+    flex: 1,
+    padding: 12,
+  },
+
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
   },
+
+  forgotPassword: {
+    padding: 1,
+  },
+
   link: {
     color: '#006C5B',
   },
+
   button: {
-    backgroundColor: '#006C5B',
+    marginTop: 70,
     padding: 15,
     borderRadius: 8,
-    marginTop: 70,
+    backgroundColor: '#006C5B',
   },
+
   buttonText: {
     color: '#fff',
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  
- inputContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-
-  borderWidth: 1,
-  borderColor: '#ccc',
-  borderRadius: 8,
-
-  paddingHorizontal: 10,
-  marginTop: 5,
-},
 });
