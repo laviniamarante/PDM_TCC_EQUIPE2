@@ -51,14 +51,6 @@ export default function RootLayout() {
         title: "Configurações",
       }}
     />
-
-      <Drawer.Screen
-      name="agenda"
-      options={{
-      drawerLabel: "Agenda",
-      title: "Agenda",
-      }}
-/>
     </Drawer>
 
     
