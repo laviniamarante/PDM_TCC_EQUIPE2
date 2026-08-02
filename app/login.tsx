@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+} from "react-native";
 import { router } from 'expo-router';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -11,6 +18,12 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
+
+        <Image
+          source={require("./assets/logo.png")}
+          style={styles.logo}
+        />
+
         <Text style={styles.title}>GerencIF</Text>
 
         <Text style={styles.subtitle}>
@@ -72,6 +85,7 @@ export default function Login() {
             Entrar
           </Text>
         </TouchableOpacity>
+
       </View>
     </View>
   );
@@ -95,8 +109,17 @@ const styles = StyleSheet.create({
     padding: 30,
   },
 
+  logo: {
+    width: 120,
+    height: 120,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginTop: 5,
+    marginBottom: 15,
+    marginLeft: 12,
+  },
+
   title: {
-    marginTop: 85,
     fontSize: 28,
     fontWeight: 'bold',
     color: '#006C5B',
@@ -106,7 +129,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    marginBottom: 50,
+    marginBottom: 40,
   },
 
   label: {
