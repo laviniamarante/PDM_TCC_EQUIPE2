@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
-import { useNavigation, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { contratos } from '../dados/home'; // ajuste o caminho se necessário
 
 export default function DetalhesContrato() {
-  const navigation = useNavigation();
-  const { id } = useLocalSearchParams();
+  const router = useRouter();
+  const { id, origem } = useLocalSearchParams();
 
 const contrato = contratos.find(
   c => c.id === Number(id)
@@ -47,12 +47,18 @@ function renderStatus(status: string) {
 
       <View style={styles.header}>
         <View style={styles.headerRow}>
+          
+          
           <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Feather name="arrow-left" size={24} color="black" />
-          </TouchableOpacity>
+  style={styles.backButton}
+  onPress={() =>
+   router.replace(
+      origem === "contratos" ? "/contratos" : "/(tabs)/home"
+    )
+}
+>
+  <Feather name="arrow-left" size={24} color="black" />
+</TouchableOpacity>
 
           <View>
             <Text style={styles.titulo}>

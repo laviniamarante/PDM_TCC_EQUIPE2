@@ -10,16 +10,20 @@ import {
 } from "react-native";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { useState } from "react";
+import { useRouter } from "expo-router";
 import { contratos } from "../dados/home";
 
 export default function Contratos() {
   const navigation = useNavigation();
+  const router = useRouter();
+
   const [busca, setBusca] = useState("");
 
-  const contratosFiltrados = contratos.filter((contrato) =>
-    contrato.titulo.toLowerCase().includes(busca.toLowerCase()) ||
-    contrato.fornecedor.toLowerCase().includes(busca.toLowerCase()) ||
-    contrato.numeroContrato.toLowerCase().includes(busca.toLowerCase())
+  const contratosFiltrados = contratos.filter(
+    (contrato) =>
+      contrato.titulo.toLowerCase().includes(busca.toLowerCase()) ||
+      contrato.fornecedor.toLowerCase().includes(busca.toLowerCase()) ||
+      contrato.numeroContrato.toLowerCase().includes(busca.toLowerCase())
   );
 
   return (
@@ -73,7 +77,20 @@ export default function Contratos() {
           </Text>
         }
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.card}
+            activeOpacity={0.7}
+            onPress={() =>
+  router.push({
+    pathname: "/detalhesContrato",
+    params: {
+      id: item.id.toString(),
+      origem: "contratos",
+    },
+  })
+}
+            
+          >
             <Text style={styles.cardTitulo}>
               {item.titulo}
             </Text>
@@ -89,7 +106,7 @@ export default function Contratos() {
             <Text style={styles.cardTexto}>
               Status: {item.status}
             </Text>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>

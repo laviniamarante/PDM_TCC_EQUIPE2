@@ -95,13 +95,14 @@ export default function Home() {
               <TouchableOpacity
                 style={styles.detalhes}
                 onPress={() =>
-                  router.push({
-                    pathname: "/detalhesContrato",
-                    params: {
-                      id: item.id,
-                    },
-                  })
-                }
+  router.push({
+    pathname: "/detalhesContrato",
+    params: {
+      id: item.id.toString(),
+      origem: "home",
+    },
+  })
+}
               >
 
                 <Text style={styles.detalhesText}>
