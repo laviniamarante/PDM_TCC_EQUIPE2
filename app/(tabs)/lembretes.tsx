@@ -6,6 +6,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
 import { lembretes, Lembrete } from '../../dados/lembrete';
+import { supabaseFetch } from '../../lib/supabase';
 
 import {
   Text,

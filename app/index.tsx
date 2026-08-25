@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { View, Image, Text, StyleSheet, Animated } from "react-native";
 import { useRouter } from "expo-router";
+import { supabaseFetch } from '../lib/supabase';
 
 export default function Splash() {
   const router = useRouter();

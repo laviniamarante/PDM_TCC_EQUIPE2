@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabaseFetch } from '../lib/supabase';
 import {
   View,
   Text,

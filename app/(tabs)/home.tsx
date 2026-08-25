@@ -3,6 +3,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { router } from "expo-router";
 import { contratos, Contrato } from '../../dados/home';
+import { supabaseFetch } from '../../lib/supabase';
 
 export default function Home() {
 

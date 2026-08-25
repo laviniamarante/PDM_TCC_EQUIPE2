@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { contratos } from '../dados/home'; // ajuste o caminho se necessário
+import { supabaseFetch } from '../lib/supabase';
 
 export default function DetalhesContrato() {
   const router = useRouter();

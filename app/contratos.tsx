@@ -12,6 +12,7 @@ import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { contratos } from "../dados/home";
+import { supabaseFetch } from '../lib/supabase';
 
 export default function Contratos() {
   const navigation = useNavigation();
