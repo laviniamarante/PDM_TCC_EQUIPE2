@@ -16,6 +16,7 @@ import { supabaseFetch } from "../lib/supabase";
 interface Contrato {
   id_contrato: number;
 
+  identificador_contrato: string;
   vigencia: number | null;
   data_inicio: string | null;
   data_fim: string | null;
@@ -312,9 +313,16 @@ function renderStatus(status: string) {
 </View>
 
 
+         
+
         <Item
           label="Objeto do contrato"
           value={contrato.objeto_contrato}
+        />
+
+        <Item
+          label="Identificador do contrato"
+          value={contrato.identificador_contrato}
         />
 
         <Item
@@ -353,6 +361,11 @@ function renderStatus(status: string) {
         <Item
           label="Data de celebração"
           value={formatarData(contrato.data_celebracao)}
+        />
+
+         <Item
+          label="Representante legal"
+          value={contrato.representante_legal}
         />
       </View>
 

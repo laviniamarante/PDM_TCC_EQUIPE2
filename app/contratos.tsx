@@ -15,6 +15,7 @@ import { supabaseFetch } from "../lib/supabase";
 
 interface Contrato {
   id_contrato: number;
+  identificador_contrato: string;
   objeto_contrato: string | null;
   numero_processo_celebracao: string | null;
   data_inicio: string | null;
@@ -40,8 +41,8 @@ export default function Contratos() {
 
   async function buscarContratos() {
   try {
-    const dados = await supabaseFetch(
-  "contrato?select=id_contrato,objeto_contrato,numero_processo_celebracao,data_inicio,data_fim,valor_global,empresa(razao_social,nome_fantasia),situacao_contrato(situacao)"
+   const dados = await supabaseFetch(
+  "contrato?select=id_contrato,identificador_contrato,objeto_contrato,numero_processo_celebracao,data_inicio,data_fim,valor_global,empresa(razao_social,nome_fantasia),situacao_contrato(situacao)"
 );
 
     console.log("CONTRATOS RECEBIDOS:", dados);
@@ -145,9 +146,13 @@ export default function Contratos() {
               })
             }
           >
-            <Text style={styles.cardTitulo}>
-              {item.objeto_contrato || "Objeto não informado"}
-            </Text>
+           <Text style={styles.identificador}>
+  {item.identificador_contrato}
+</Text>
+
+<Text style={styles.cardTitulo}>
+  {item.objeto_contrato}
+</Text>
 
             <Text style={styles.cardTexto}>
               Fornecedor:{" "}
@@ -289,4 +294,10 @@ const styles = StyleSheet.create({
     color: "#666",
     fontSize: 16,
   },
+  identificador: {
+  fontSize: 18,
+  fontWeight: "bold",
+  color: "#006C5B",
+  marginBottom: 8,
+},
 });

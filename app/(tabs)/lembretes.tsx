@@ -28,6 +28,7 @@ interface Lembrete {
   data_criacao: string | null;
 
   contrato: {
+    identificador_contrato: string;
     objeto_contrato: string | null;
     data_fim: string | null;
 
@@ -52,7 +53,7 @@ export default function Lembretes() {
   async function buscarLembretes() {
     try {
       const dados = await supabaseFetch(
-        "notificacao?select=id_notificacao,titulo,descricao,tempo_envio,data_criacao,tipo_notificacao(tipo),contrato(objeto_contrato,data_fim,situacao_contrato(situacao))&order=data_criacao.desc"
+        "notificacao?select=id_notificacao,titulo,descricao,tempo_envio,data_criacao,tipo_notificacao(tipo),contrato(identificador_contrato,objeto_contrato,data_fim,situacao_contrato(situacao))&order=data_criacao.desc"
       );
 
       console.log("LEMBRETES RECEBIDOS:", dados);
@@ -70,22 +71,23 @@ export default function Lembretes() {
     buscarLembretes();
   }, []);
 
-function descobrirTipo(item: Lembrete): Filtro {
-  const status =
-    item.contrato?.situacao_contrato?.situacao
-      ?.trim()
-      .toLowerCase();
+  function descobrirTipo(item: Lembrete): Filtro {
+    const status =
+      item.contrato?.situacao_contrato?.situacao
+        ?.trim()
+        .toLowerCase();
 
-  if (status === "vencido") {
-    return "vencido";
+    if (status === "vencido") {
+      return "vencido";
+    }
+
+    if (status === "pendente") {
+      return "pendente";
+    }
+
+    return "ativo";
   }
 
-  if (status === "pendente") {
-    return "pendente";
-  }
-
-  return "ativo";
-}
   const lembretesFiltrados = lembretes.filter(
     (item) => {
       if (filtro === "todos") {
@@ -283,6 +285,12 @@ function descobrirTipo(item: Lembrete): Filtro {
 
               <View style={styles.areaTexto}>
 
+                {/* IDENTIFICADOR DO CONTRATO */}
+
+                <Text style={styles.identificador}>
+                  {item.contrato?.identificador_contrato}
+                </Text>
+
                 <Text style={styles.tituloCard}>
                   {item.titulo}
                 </Text>
@@ -398,6 +406,13 @@ const styles = StyleSheet.create({
 
   areaTexto: {
     flex: 1,
+  },
+
+  identificador: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#006C5B",
+    marginBottom: 4,
   },
 
   tituloCard: {

@@ -19,6 +19,7 @@ import { supabaseFetch } from "../../lib/supabase";
 
 interface Contrato {
   id_contrato: number;
+  identificador_contrato: string;
   objeto_contrato: string | null;
   data_inicio: string | null;
   data_fim: string | null;
@@ -41,7 +42,7 @@ export default function Home() {
   async function buscarContratos() {
     try {
       const dados = await supabaseFetch(
-        "contrato?select=id_contrato,objeto_contrato,data_inicio,data_fim,empresa(razao_social,nome_fantasia),situacao_contrato(situacao)&order=id_contrato.desc&limit=5"
+        "contrato?select=id_contrato,identificador_contrato,objeto_contrato,data_inicio,data_fim,empresa(razao_social,nome_fantasia),situacao_contrato(situacao)&order=id_contrato.desc&limit=5"
       );
 
       console.log("CONTRATOS RECENTES:", dados);
@@ -124,11 +125,21 @@ export default function Home() {
           }
           renderItem={({ item }) => (
             <View style={styles.card}>
+
               <View style={styles.topCard}>
-                <Text style={styles.cardText}>
-                  {item.objeto_contrato ||
-                    "Objeto não informado"}
-                </Text>
+
+                <View style={styles.infoPrincipal}>
+
+                  <Text style={styles.identificador}>
+                    {item.identificador_contrato}
+                  </Text>
+
+                  <Text style={styles.cardText}>
+                    {item.objeto_contrato ||
+                      "Objeto não informado"}
+                  </Text>
+
+                </View>
 
                 <View
                   style={renderStatus(
@@ -141,6 +152,7 @@ export default function Home() {
                       "Não informado"}
                   </Text>
                 </View>
+
               </View>
 
               <Text style={styles.cardSubtitle}>
@@ -183,6 +195,7 @@ export default function Home() {
                   Ver detalhes
                 </Text>
               </TouchableOpacity>
+
             </View>
           )}
         />
@@ -255,10 +268,20 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
 
-  cardText: {
-    fontSize: 16,
+  infoPrincipal: {
     flex: 1,
     marginRight: 10,
+  },
+
+  identificador: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#006C5B",
+    marginBottom: 8,
+  },
+
+  cardText: {
+    fontSize: 16,
     fontWeight: "600",
   },
 
@@ -273,7 +296,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 18,
     borderRadius: 5,
-    marginTop: -10,
     flexShrink: 0,
   },
 
@@ -282,7 +304,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 12,
     borderRadius: 5,
-    marginTop: -10,
     flexShrink: 0,
   },
 
@@ -291,7 +312,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 12,
     borderRadius: 5,
-    marginTop: -10,
     flexShrink: 0,
   },
 
