@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import Entypo from "@expo/vector-icons/Entypo";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import Feather from '@expo/vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
-import { DrawerActions } from '@react-navigation/native';
-import { lembretes, Lembrete } from '../../dados/lembrete';
-import { supabaseFetch } from '../../lib/supabase';
+import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Feather from "@expo/vector-icons/Feather";
+
+import {
+  useNavigation,
+  DrawerActions,
+} from "@react-navigation/native";
+
+import { supabaseFetch } from "../../lib/supabase";
 
 import {
   Text,
@@ -16,27 +20,84 @@ import {
   FlatList,
 } from "react-native";
 
-export default function Lembretes() {
+interface Lembrete {
+  id_notificacao: number;
+  titulo: string;
+  descricao: string | null;
+  tempo_envio: number | null;
+  data_criacao: string | null;
 
+  contrato: {
+    objeto_contrato: string | null;
+    data_fim: string | null;
+
+    situacao_contrato: {
+      situacao: string;
+    } | null;
+  } | null;
+
+  tipo_notificacao: {
+    tipo: string;
+  } | null;
+}
+
+type Filtro = "todos" | "ativo" | "pendente" | "vencido";
+
+export default function Lembretes() {
   const navigation = useNavigation();
 
-  const [filtro, setFiltro] = useState<
-    'todos' | Lembrete['tipo']
-  >('todos');
+  const [filtro, setFiltro] = useState<Filtro>("todos");
+  const [lembretes, setLembretes] = useState<Lembrete[]>([]);
 
-  const lembretesFiltrados = lembretes.filter((item: Lembrete) => {
+  async function buscarLembretes() {
+    try {
+      const dados = await supabaseFetch(
+        "notificacao?select=id_notificacao,titulo,descricao,tempo_envio,data_criacao,tipo_notificacao(tipo),contrato(objeto_contrato,data_fim,situacao_contrato(situacao))&order=data_criacao.desc"
+      );
 
-    if (filtro === 'todos') {
-      return true;
+      console.log("LEMBRETES RECEBIDOS:", dados);
+
+      setLembretes(dados);
+    } catch (error) {
+      console.error(
+        "ERRO AO BUSCAR LEMBRETES:",
+        error
+      );
     }
+  }
 
-    return item.tipo === filtro;
+  useEffect(() => {
+    buscarLembretes();
+  }, []);
 
-  });
+function descobrirTipo(item: Lembrete): Filtro {
+  const status =
+    item.contrato?.situacao_contrato?.situacao
+      ?.trim()
+      .toLowerCase();
 
-  function renderIcone(tipo: Lembrete['tipo']) {
+  if (status === "vencido") {
+    return "vencido";
+  }
 
-    if (tipo === 'vencido') {
+  if (status === "pendente") {
+    return "pendente";
+  }
+
+  return "ativo";
+}
+  const lembretesFiltrados = lembretes.filter(
+    (item) => {
+      if (filtro === "todos") {
+        return true;
+      }
+
+      return descobrirTipo(item) === filtro;
+    }
+  );
+
+  function renderIcone(tipo: Filtro) {
+    if (tipo === "vencido") {
       return (
         <View style={styles.iconeVermelho}>
           <AntDesign
@@ -48,7 +109,7 @@ export default function Lembretes() {
       );
     }
 
-    if (tipo === 'pendente') {
+    if (tipo === "pendente") {
       return (
         <View style={styles.iconeAmarelo}>
           <MaterialIcons
@@ -69,85 +130,191 @@ export default function Lembretes() {
         />
       </View>
     );
+  }
 
+  function formatarData(data: string | null) {
+    if (!data) {
+      return "Data não informada";
+    }
+
+    return new Date(data).toLocaleDateString(
+      "pt-BR"
+    );
   }
 
   return (
     <View style={styles.container}>
 
+      {/* NAVBAR */}
+
       <View style={styles.NavBarCima}>
 
         <TouchableOpacity
-                onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-                <Entypo name="menu" size={32} color="white" />
-                </TouchableOpacity>
+          onPress={() =>
+            navigation.dispatch(
+              DrawerActions.openDrawer()
+            )
+          }
+        >
+          <Entypo
+            name="menu"
+            size={32}
+            color="white"
+          />
+        </TouchableOpacity>
 
         <View style={styles.logoArea}>
-          <Text style={styles.TextoNav}>Lembretes</Text>
-          <Text style={styles.SubtitleNav}>GerencIF</Text>
+          <Text style={styles.TextoNav}>
+            Lembretes
+          </Text>
+
+          <Text style={styles.SubtitleNav}>
+            GerencIF
+          </Text>
         </View>
 
       </View>
 
+      {/* FILTROS */}
+
       <View style={styles.areaFiltros}>
 
         <TouchableOpacity
-          style={styles.botaoFiltro}
-          onPress={() => setFiltro('todos')}
+          style={[
+            styles.botaoFiltro,
+            filtro === "todos" &&
+              styles.botaoFiltroSelecionado,
+          ]}
+          onPress={() => setFiltro("todos")}
         >
-          <Text>Todos</Text>
+          <Text
+            style={
+              filtro === "todos"
+                ? styles.textoFiltroSelecionado
+                : undefined
+            }
+          >
+            Todos
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.botaoFiltro}
-          onPress={() => setFiltro('ativo')}
+          style={[
+            styles.botaoFiltro,
+            filtro === "ativo" &&
+              styles.botaoFiltroSelecionado,
+          ]}
+          onPress={() => setFiltro("ativo")}
         >
-          <Text>Ativos</Text>
+          <Text
+            style={
+              filtro === "ativo"
+                ? styles.textoFiltroSelecionado
+                : undefined
+            }
+          >
+            Ativos
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.botaoFiltro}
-          onPress={() => setFiltro('pendente')}
+          style={[
+            styles.botaoFiltro,
+            filtro === "pendente" &&
+              styles.botaoFiltroSelecionado,
+          ]}
+          onPress={() => setFiltro("pendente")}
         >
-          <Text>Pendentes</Text>
+          <Text
+            style={
+              filtro === "pendente"
+                ? styles.textoFiltroSelecionado
+                : undefined
+            }
+          >
+            Pendentes
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.botaoFiltro}
-          onPress={() => setFiltro('vencido')}
+          style={[
+            styles.botaoFiltro,
+            filtro === "vencido" &&
+              styles.botaoFiltroSelecionado,
+          ]}
+          onPress={() => setFiltro("vencido")}
         >
-          <Text>Vencidos</Text>
+          <Text
+            style={
+              filtro === "vencido"
+                ? styles.textoFiltroSelecionado
+                : undefined
+            }
+          >
+            Vencidos
+          </Text>
         </TouchableOpacity>
 
       </View>
 
+      {/* LISTA */}
+
       <FlatList
         data={lembretesFiltrados}
-        keyExtractor={(item) => item.id}
 
-        renderItem={({ item }: { item: Lembrete }) => (
-          <View style={styles.card}>
+        keyExtractor={(item) =>
+          item.id_notificacao.toString()
+        }
 
-            {renderIcone(item.tipo)}
+        ListEmptyComponent={
+          <Text style={styles.semResultados}>
+            Nenhum lembrete encontrado.
+          </Text>
+        }
 
-            <View style={styles.areaTexto}>
+        renderItem={({ item }) => {
 
-              <Text style={styles.tituloCard}>
-                {item.titulo}
-              </Text>
+          const tipo = descobrirTipo(item);
 
-              <Text style={styles.tempoTexto}>
-                {item.tempo}
-              </Text>
+          return (
+            <View style={styles.card}>
 
-              <Text style={styles.subtituloCard}>
-                {item.subtitulo}
-              </Text>
+              {renderIcone(tipo)}
+
+              <View style={styles.areaTexto}>
+
+                <Text style={styles.tituloCard}>
+                  {item.titulo}
+                </Text>
+
+                <Text style={styles.tempoTexto}>
+                  {item.tempo_envio !== null
+                    ? `Enviar ${item.tempo_envio} dias antes`
+                    : `Criado em ${formatarData(
+                        item.data_criacao
+                      )}`}
+                </Text>
+
+                <Text style={styles.subtituloCard}>
+                  {item.contrato?.objeto_contrato ||
+                    item.descricao ||
+                    "Contrato não informado"}
+                </Text>
+
+                {item.contrato?.data_fim && (
+                  <Text style={styles.dataVencimento}>
+                    Vencimento:{" "}
+                    {formatarData(
+                      item.contrato.data_fim
+                    )}
+                  </Text>
+                )}
+
+              </View>
 
             </View>
-
-          </View>
-        )}
+          );
+        }}
       />
 
     </View>
@@ -158,16 +325,16 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
 
   NavBarCima: {
-    backgroundColor: '#006C5B',
-    width: '100%',
+    backgroundColor: "#006C5B",
+    width: "100%",
 
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
 
     paddingHorizontal: 25,
     paddingTop: 60,
@@ -175,13 +342,13 @@ const styles = StyleSheet.create({
   },
 
   TextoNav: {
-    color: 'white',
+    color: "white",
     fontSize: 25,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 
   SubtitleNav: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
   },
 
@@ -190,14 +357,13 @@ const styles = StyleSheet.create({
   },
 
   areaFiltros: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginVertical: 15,
   },
 
   botaoFiltro: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
 
     paddingVertical: 8,
     paddingHorizontal: 15,
@@ -207,80 +373,104 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
 
-  card: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+  botaoFiltroSelecionado: {
+    backgroundColor: "#006C5B",
+  },
 
-    backgroundColor: 'white',
+  textoFiltroSelecionado: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  card: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+
+    backgroundColor: "white",
 
     padding: 20,
     margin: 10,
+
     borderRadius: 10,
 
     elevation: 3,
   },
 
   areaTexto: {
-    width: '80%',
+    flex: 1,
   },
 
   tituloCard: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 
   subtituloCard: {
     fontSize: 15,
-    color: 'gray',
+    color: "gray",
   },
 
   tempoTexto: {
     fontSize: 14,
-    color: '#999',
+    color: "#999",
+
     marginTop: 5,
     marginBottom: 6,
   },
 
+  dataVencimento: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 5,
+  },
+
   iconeVerde: {
-    backgroundColor: '#39c172',
+    backgroundColor: "#39c172",
 
     width: 45,
     height: 45,
 
     borderRadius: 100,
 
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
 
     marginRight: 15,
   },
 
   iconeAmarelo: {
-    backgroundColor: '#f5ba18',
+    backgroundColor: "#f5ba18",
 
     width: 45,
     height: 45,
 
     borderRadius: 100,
 
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
 
     marginRight: 15,
   },
 
   iconeVermelho: {
-    backgroundColor: '#e53935',
+    backgroundColor: "#e53935",
 
     width: 45,
     height: 45,
 
     borderRadius: 100,
 
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
 
     marginRight: 15,
+  },
+
+  semResultados: {
+    textAlign: "center",
+    marginTop: 30,
+    color: "#666",
+    fontSize: 16,
   },
 
 });
