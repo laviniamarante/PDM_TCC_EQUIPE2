@@ -136,6 +136,7 @@ export default function DetalhesContrato() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
 
+  useEffect(() => {
   async function buscarContrato() {
     try {
       setCarregando(true);
@@ -162,11 +163,10 @@ export default function DetalhesContrato() {
     }
   }
 
-  useEffect(() => {
-    if (id) {
-      buscarContrato();
-    }
-  }, [id]);
+  if (id) {
+    buscarContrato();
+  }
+}, [id]);
 
   function formatarData(data: string | null) {
     if (!data) {
@@ -359,7 +359,7 @@ function renderStatus(status: string) {
       {/* EMPRESA */}
       <View style={styles.card}>
         <Text style={styles.secaoTitulo}>
-          Empresa / Fornecedor
+          Empresa 
         </Text>
 
 
