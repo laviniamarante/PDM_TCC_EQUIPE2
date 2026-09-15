@@ -1,6 +1,5 @@
 import { Text, TouchableOpacity, View, StyleSheet} from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { DrawerActions } from '@react-navigation/native';
+import { useNavigation, DrawerActions } from "expo-router/react-navigation";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';

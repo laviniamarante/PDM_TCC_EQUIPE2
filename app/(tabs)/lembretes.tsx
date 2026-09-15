@@ -8,7 +8,7 @@ import Feather from "@expo/vector-icons/Feather";
 import {
   useNavigation,
   DrawerActions,
-} from "@react-navigation/native";
+} from "expo-router/react-navigation";
 
 import { supabaseFetch } from "../../lib/supabase";
 

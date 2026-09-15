@@ -7,10 +7,7 @@ import {
 } from "react-native";
 
 import Entypo from "@expo/vector-icons/Entypo";
-import {
-  DrawerActions,
-  useNavigation,
-} from "@react-navigation/native";
+import { DrawerActions, useNavigation } from "expo-router/react-navigation";
 
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -39,24 +36,24 @@ export default function Home() {
 
   const [contratos, setContratos] = useState<Contrato[]>([]);
 
-  async function buscarContratos() {
-    try {
-      const dados = await supabaseFetch(
-        "contrato?select=id_contrato,identificador_contrato,objeto_contrato,data_inicio,data_fim,empresa(razao_social,nome_fantasia),situacao_contrato(situacao)&order=id_contrato.desc&limit=5"
-      );
-
-      console.log("CONTRATOS RECENTES:", dados);
-
-      setContratos(dados);
-    } catch (error) {
-      console.error(
-        "ERRO AO BUSCAR CONTRATOS RECENTES:",
-        error
-      );
-    }
-  }
-
   useEffect(() => {
+    async function buscarContratos() {
+      try {
+        const dados = await supabaseFetch(
+          "contrato?select=id_contrato,identificador_contrato,objeto_contrato,data_inicio,data_fim,empresa(razao_social,nome_fantasia),situacao_contrato(situacao)&order=id_contrato.desc&limit=5"
+        );
+
+        console.log("CONTRATOS RECENTES:", dados);
+
+        setContratos(dados);
+      } catch (error) {
+        console.error(
+          "ERRO AO BUSCAR CONTRATOS RECENTES:",
+          error
+        );
+      }
+    }
+
     buscarContratos();
   }, []);
 
@@ -125,11 +122,8 @@ export default function Home() {
           }
           renderItem={({ item }) => (
             <View style={styles.card}>
-
               <View style={styles.topCard}>
-
                 <View style={styles.infoPrincipal}>
-
                   <Text style={styles.identificador}>
                     {item.identificador_contrato}
                   </Text>
@@ -138,7 +132,6 @@ export default function Home() {
                     {item.objeto_contrato ||
                       "Objeto não informado"}
                   </Text>
-
                 </View>
 
                 <View
@@ -152,7 +145,6 @@ export default function Home() {
                       "Não informado"}
                   </Text>
                 </View>
-
               </View>
 
               <Text style={styles.cardSubtitle}>
@@ -195,7 +187,6 @@ export default function Home() {
                   Ver detalhes
                 </Text>
               </TouchableOpacity>
-
             </View>
           )}
         />
@@ -208,11 +199,9 @@ const styles = StyleSheet.create({
   topNavbar: {
     backgroundColor: "#006C5B",
     width: "100%",
-
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-
     paddingHorizontal: 25,
     paddingTop: 60,
     paddingBottom: 25,

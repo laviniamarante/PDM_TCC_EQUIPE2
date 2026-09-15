@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import Entypo from "@expo/vector-icons/Entypo";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
+import { DrawerActions, useNavigation } from "expo-router/react-navigation";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
