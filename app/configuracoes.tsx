@@ -18,10 +18,20 @@ export default function Configuracoes() {
                 <Text style={styles.SubtitleNav}>GerencIF</Text>
             </View>
             </View>
-          <TouchableOpacity style={styles.card} onPress={() => router.replace('/login')}>
-        <Feather name="log-out" size={20} color="#000" />
-        <Text style={styles.cardText}>Sair</Text>
-      </TouchableOpacity>
+
+<TouchableOpacity
+  style={styles.card}
+  onPress={() =>
+    router.replace({
+      pathname: "/login",
+      params: { saiu: "true" },
+    })
+  }
+>
+  <Feather name="log-out" size={20} color="#000" />
+  <Text style={styles.cardText}>Sair</Text>
+</TouchableOpacity>
+
 
         </View>
     );   

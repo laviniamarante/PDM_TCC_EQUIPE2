@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Image,
   StyleSheet,
@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
+import { useLocalSearchParams } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { router } from "expo-router";
@@ -15,10 +15,30 @@ import { router } from "expo-router";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
 
   function entrar() {
-    router.replace("/(tabs)/home");
+    setErro("");
+
+    if (!email.trim()) {
+      setErro("Digite seu email.");
+      return;
+    }
+
+    const emailValido = /\S+@\S+\.\S+/;
+
+    if (!emailValido.test(email)) {
+      setErro("Digite um email válido.");
+      return;
+    }
+    if (!senha.trim()) {
+      setErro("Digite sua senha.");
+      return;
+    }
+   router.replace("/(tabs)/home");
   }
+
+  const { saiu } = useLocalSearchParams(); useEffect(() => { if (saiu === "true") { setEmail(""); setSenha(""); } }, [saiu]);
 
   return (
     <View style={styles.container}>
@@ -52,6 +72,8 @@ export default function Login() {
             placeholder="Digite seu email..."
             value={email}
             onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
         </View>
 
@@ -75,13 +97,13 @@ export default function Login() {
           />
         </View>
 
-        <View style={styles.row}>
-          <TouchableOpacity>
-            <Text>
-              Lembrar-me
-            </Text>
-          </TouchableOpacity>
+        {erro !== "" && (
+          <Text style={styles.erro}>
+            {erro}
+          </Text>
+        )}
 
+        <View style={styles.row}>
           <TouchableOpacity style={styles.forgotPassword}>
             <Text style={styles.link}>
               Esqueci minha senha
@@ -163,6 +185,12 @@ const styles = StyleSheet.create({
     padding: 12,
   },
 
+  erro: {
+    color: "#e53935",
+    marginTop: 10,
+    textAlign: "center",
+  },
+
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -190,3 +218,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
