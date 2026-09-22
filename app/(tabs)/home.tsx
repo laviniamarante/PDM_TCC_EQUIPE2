@@ -115,11 +115,7 @@ export default function Home() {
               </Text>
             </>
           }
-          ListEmptyComponent={
-            <Text style={styles.semResultados}>
-              Nenhum contrato encontrado.
-            </Text>
-          }
+
           renderItem={({ item }) => (
             <View style={styles.card}>
               <View style={styles.topCard}>

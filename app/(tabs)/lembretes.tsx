@@ -147,8 +147,6 @@ export default function Lembretes() {
   return (
     <View style={styles.container}>
 
-      {/* NAVBAR */}
-
       <View style={styles.NavBarCima}>
 
         <TouchableOpacity
@@ -176,8 +174,6 @@ export default function Lembretes() {
         </View>
 
       </View>
-
-      {/* FILTROS */}
 
       <View style={styles.areaFiltros}>
 
@@ -259,19 +255,11 @@ export default function Lembretes() {
 
       </View>
 
-      {/* LISTA */}
-
       <FlatList
         data={lembretesFiltrados}
 
         keyExtractor={(item) =>
           item.id_notificacao.toString()
-        }
-
-        ListEmptyComponent={
-          <Text style={styles.semResultados}>
-            Nenhum lembrete encontrado.
-          </Text>
         }
 
         renderItem={({ item }) => {
@@ -285,7 +273,6 @@ export default function Lembretes() {
 
               <View style={styles.areaTexto}>
 
-                {/* IDENTIFICADOR DO CONTRATO */}
 
                 <Text style={styles.identificador}>
                   {item.contrato?.identificador_contrato}
