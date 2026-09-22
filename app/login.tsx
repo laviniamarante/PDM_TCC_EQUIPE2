@@ -1,36 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  View,
+  Image,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
-  StyleSheet,
+  View,
 } from "react-native";
-import { router } from 'expo-router';
-import Fontisto from '@expo/vector-icons/Fontisto';
-import AntDesign from '@expo/vector-icons/AntDesign';
+
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Fontisto from "@expo/vector-icons/Fontisto";
+import { router } from "expo-router";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+
+  function entrar() {
+    router.replace("/(tabs)/home");
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-
         <Image
           source={require("./assets/logo.png")}
           style={styles.logo}
         />
 
-        <Text style={styles.title}>GerencIF</Text>
+        <Text style={styles.title}>
+          GerencIF
+        </Text>
 
         <Text style={styles.subtitle}>
           Sistema de Gerenciamento de Contratos do IFPB Campus Esperança
         </Text>
 
-        <Text style={styles.label}>Email</Text>
+        <Text style={styles.label}>
+          Email
+        </Text>
 
         <View style={styles.inputContainer}>
           <Fontisto
@@ -47,7 +55,9 @@ export default function Login() {
           />
         </View>
 
-        <Text style={styles.label}>Senha</Text>
+        <Text style={styles.label}>
+          Senha
+        </Text>
 
         <View style={styles.inputContainer}>
           <AntDesign
@@ -67,7 +77,9 @@ export default function Login() {
 
         <View style={styles.row}>
           <TouchableOpacity>
-            <Text>Lembrar-me</Text>
+            <Text>
+              Lembrar-me
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.forgotPassword}>
@@ -79,13 +91,12 @@ export default function Login() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.replace('/(tabs)/home')}
+          onPress={entrar}
         >
           <Text style={styles.buttonText}>
             Entrar
           </Text>
         </TouchableOpacity>
-
       </View>
     </View>
   );
@@ -94,26 +105,26 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#ffffff",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   card: {
-    width: '85%',
-    height: '80%',
-    backgroundColor: '#fff',
+    width: "85%",
+    height: "80%",
+    backgroundColor: "#fff",
     borderRadius: 20,
     borderWidth: 0.7,
-    borderColor: '#bebcbc',
+    borderColor: "#bebcbc",
     padding: 30,
   },
 
   logo: {
     width: 120,
     height: 120,
-    resizeMode: 'contain',
-    alignSelf: 'center',
+    resizeMode: "contain",
+    alignSelf: "center",
     marginTop: 5,
     marginBottom: 15,
     marginLeft: 12,
@@ -121,29 +132,29 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#006C5B',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#006C5B",
+    textAlign: "center",
   },
 
   subtitle: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 40,
   },
 
   label: {
     marginTop: 25,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 5,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
   },
 
@@ -153,8 +164,8 @@ const styles = StyleSheet.create({
   },
 
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 10,
   },
 
@@ -163,19 +174,19 @@ const styles = StyleSheet.create({
   },
 
   link: {
-    color: '#006C5B',
+    color: "#006C5B",
   },
 
   button: {
     marginTop: 70,
     padding: 15,
     borderRadius: 8,
-    backgroundColor: '#006C5B',
+    backgroundColor: "#006C5B",
   },
 
   buttonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: 'bold',
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });

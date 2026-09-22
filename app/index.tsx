@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
-
 
 export default function Splash() {
   const router = useRouter();
-const [opacity] = useState(() => new Animated.Value(0));
+
+  const [opacity] = useState(
+    () => new Animated.Value(0)
+  );
 
   useEffect(() => {
     Animated.timing(opacity, {
@@ -21,26 +23,26 @@ const [opacity] = useState(() => new Animated.Value(0));
     return () => clearTimeout(timer);
   }, []);
 
-return (
-  <View style={styles.container}>
-    <Animated.Image
-      source={require("./assets/logo.png")}
-      style={[styles.logo, { opacity }]}
-    />
+  return (
+    <View style={styles.container}>
+      <Animated.Image
+        source={require("./assets/logo.png")}
+        style={[styles.logo, { opacity }]}
+      />
 
-    <Animated.Text
-      style={[styles.titulo, { opacity }]}
-    >
-      GerencIF
-    </Animated.Text>
+      <Animated.Text
+        style={[styles.titulo, { opacity }]}
+      >
+        GerencIF
+      </Animated.Text>
 
-    <Animated.Text
-      style={[styles.subtitulo, { opacity }]}
-    >
-      Sistema de Gerenciamento de Contratos
-    </Animated.Text>
-  </View>
-);
+      <Animated.Text
+        style={[styles.subtitulo, { opacity }]}
+      >
+        Sistema de Gerenciamento de Contratos
+      </Animated.Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -51,26 +53,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-logo: {
-  width: 150,
-  height: 150,
-  resizeMode: "contain",
-  alignSelf: "center",
-  marginLeft: 10,
-},
+  logo: {
+    width: 150,
+    height: 150,
+    resizeMode: "contain",
+    alignSelf: "center",
+    marginLeft: 10,
+  },
 
-titulo: {
-  marginTop: 20,
-  fontSize: 32,
-  fontWeight: "bold",
-  color: "#006C5B",
-  textAlign: "center",
-},
+  titulo: {
+    marginTop: 20,
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#006C5B",
+    textAlign: "center",
+  },
 
-subtitulo: {
-  marginTop: 8,
-  fontSize: 16,
-  color: "#555",
-  textAlign: "center",
-},
+  subtitulo: {
+    marginTop: 8,
+    fontSize: 16,
+    color: "#555",
+    textAlign: "center",
+  },
 });
