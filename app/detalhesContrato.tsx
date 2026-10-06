@@ -1,11 +1,11 @@
 import {
-  ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput,
+  ActivityIndicator, Modal, ScrollView, StyleSheet, Text,
+  TouchableOpacity, View, TextInput,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabaseFetch } from "../lib/supabase";
-
 
 interface Contrato {
   id_contrato: number;
@@ -50,28 +50,50 @@ interface Contrato {
   id_verba: number;
   id_situacao_contrato: number | null;
   empresa: {
-    id_empresa: number; cnpj: string; email: string | null; telefone: string | null;
-    endereco: string | null; razao_social: string; nome_fantasia: string | null;
+    id_empresa: number;
+    cnpj: string;
+    email: string | null;
+    telefone: string | null;
+    endereco: string | null;
+    razao_social: string;
+    nome_fantasia: string | null;
   } | null;
   categoria: { id_categoria: number; nome: string } | null;
   verba: {
-    id_verba: number; descricao: string; valor_disponivel: number | null;
+    id_verba: number;
+    descricao: string;
+    valor_disponivel: number | null;
     valor_utilizado: number | null;
   } | null;
-  situacao_contrato: { id_situacao_contrato: number; situacao: string } | null;
-  prorrogacao: { id_prorrogacao: number; novo_prazo: number | null; novo_valor: number | null }[];
-  pagamento: { id_pagamento: number; descricao: string | null; valor_pago: number }[];
+  situacao_contrato: {
+    id_situacao_contrato: number;
+    situacao: string;
+  } | null;
+  prorrogacao: {
+    id_prorrogacao: number;
+    novo_prazo: number | null;
+    novo_valor: number | null;
+  }[];
+  pagamento: {
+    id_pagamento: number;
+    descricao: string | null;
+    valor_pago: number;
+  }[];
   notificacao: {
-    id_notificacao: number; tempo_envio: number | null; titulo: string;
-    descricao: string | null; data_criacao: string | null;
-    tipo_notificacao: { id_tipo_notificacao: number; tipo: string } | null;
+    id_notificacao: number;
+    tempo_envio: number | null;
+    titulo: string;
+    descricao: string | null;
+    data_criacao: string | null;
+    tipo_notificacao: {
+      id_tipo_notificacao: number;
+      tipo: string;
+    } | null;
   }[];
 }
 
-
 const PesquisaContext = createContext("");
 const usePesquisa = () => useContext(PesquisaContext);
-
 
 export default function DetalhesContrato() {
   const router = useRouter();
@@ -80,7 +102,7 @@ export default function DetalhesContrato() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [pesquisa, setPesquisa] = useState("");
-
+  const [mostrarHistorico, setMostrarHistorico] = useState(false);
 
   useEffect(() => {
     async function buscarContrato() {
@@ -91,11 +113,13 @@ export default function DetalhesContrato() {
           `contrato?select=*,empresa(*),categoria(*),verba(*),situacao_contrato(*),prorrogacao(*),pagamento(*),notificacao(*,tipo_notificacao(*))&id_contrato=eq.${id}`
         );
         console.log("DETALHES DO CONTRATO:", dados);
+
         if (!dados || dados.length === 0) {
           setContrato(null);
           setErro("Contrato não encontrado.");
           return;
         }
+
         setContrato(dados[0]);
       } catch (error) {
         console.error("ERRO AO BUSCAR CONTRATO:", error);
@@ -104,26 +128,25 @@ export default function DetalhesContrato() {
         setCarregando(false);
       }
     }
+
     if (id) buscarContrato();
   }, [id]);
-
 
   const formatarData = (data: string | null) =>
     data ? new Date(data).toLocaleDateString("pt-BR") : "Não informado";
 
-
   const formatarDataHora = (data: string | null) =>
     data ? new Date(data).toLocaleString("pt-BR") : "Não informado";
 
-
   const formatarValor = (valor: number | null) => {
     if (valor === null || valor === undefined) return "Não informado";
-    return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    return valor.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   };
 
-
   const formatarBooleano = (valor: boolean) => valor ? "Sim" : "Não";
-
 
   const renderStatus = (status: string) => {
     if (status === "Ativo") return styles.statusAtivo;
@@ -131,10 +154,8 @@ export default function DetalhesContrato() {
     return styles.statusPendente;
   };
 
-
   const voltar = () =>
     router.replace(origem === "contratos" ? "/contratos" : "/(tabs)/home");
-
 
   if (carregando) {
     return (
@@ -144,7 +165,6 @@ export default function DetalhesContrato() {
       </View>
     );
   }
-
 
   if (erro || !contrato) {
     return (
@@ -157,12 +177,13 @@ export default function DetalhesContrato() {
     );
   }
 
-
   return (
     <PesquisaContext.Provider value={pesquisa}>
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.topBar} />
-
 
         <View style={styles.header}>
           <View style={styles.headerRow}>
@@ -178,7 +199,6 @@ export default function DetalhesContrato() {
           </View>
         </View>
 
-
         <View style={styles.searchContainer}>
           <Feather name="search" size={20} color="#777" />
           <TextInput
@@ -190,34 +210,53 @@ export default function DetalhesContrato() {
             returnKeyType="search"
           />
           {pesquisa.length > 0 && (
-            <TouchableOpacity onPress={() => setPesquisa("")} style={styles.clearButton}>
+            <TouchableOpacity
+              onPress={() => setPesquisa("")}
+              style={styles.clearButton}
+            >
               <Feather name="x" size={20} color="#777" />
             </TouchableOpacity>
           )}
         </View>
-
 
         <View style={styles.card}>
           <Text style={styles.secaoTitulo}>Identificação do contrato</Text>
           <Text style={styles.cardTitulo}>
             {contrato.objeto_contrato || "Objeto não informado"}
           </Text>
-          <View style={renderStatus(contrato?.situacao_contrato?.situacao ?? "Pendente")}>
+          <View
+            style={renderStatus(
+              contrato?.situacao_contrato?.situacao ?? "Pendente"
+            )}
+          >
             <Text style={styles.statusText}>
               {contrato?.situacao_contrato?.situacao ?? "Não informado"}
             </Text>
           </View>
           <Item label="Objeto do contrato" value={contrato.objeto_contrato} />
           <Item label="Identificador do contrato" value={contrato.identificador_contrato} />
-          <Item label="Vigência" value={contrato.vigencia !== null ? `${contrato.vigencia} meses` : null} />
+          <Item
+            label="Vigência"
+            value={
+              contrato.vigencia !== null
+                ? `${contrato.vigencia} meses`
+                : null
+            }
+          />
           <Item label="Data de início" value={formatarData(contrato.data_inicio)} />
           <Item label="Data de fim" value={formatarData(contrato.data_fim)} />
           <Item label="Prorrogável" value={formatarBooleano(contrato.prorrogavel)} />
-          <Item label="Prazo restante" value={contrato.prazo_restante !== null ? `${contrato.prazo_restante} meses` : null} />
+          <Item
+            label="Prazo restante"
+            value={
+              contrato.prazo_restante !== null
+                ? `${contrato.prazo_restante} meses`
+                : null
+            }
+          />
           <Item label="Data de celebração" value={formatarData(contrato.data_celebracao)} />
           <Item label="Representante legal" value={contrato.representante_legal} />
         </View>
-
 
         <Card title="Empresa">
           <Item label="Razão social" value={contrato.empresa?.razao_social} />
@@ -228,14 +267,12 @@ export default function DetalhesContrato() {
           <Item label="Endereço" value={contrato.empresa?.endereco} />
         </Card>
 
-
         <Card title="Classificação">
           <Item label="Categoria" value={contrato.categoria?.nome} />
           <Item label="Situação do contrato" value={contrato.situacao_contrato?.situacao} />
           <Item label="Situação no governo" value={contrato.situacao_gov} />
           <Item label="Natureza do contrato" value={contrato.natureza_contrato} />
         </Card>
-
 
         <Card title="Processos e documentos">
           <Item label="Número do processo de celebração" value={contrato.numero_processo_celebracao} />
@@ -248,14 +285,12 @@ export default function DetalhesContrato() {
           <Item label="Link do pregão SRP" value={contrato.link_pregao_srp} />
         </Card>
 
-
         <Card title="Fiscalização e gestão">
           <Item label="Fiscal titular" value={contrato.fiscal_titular} />
           <Item label="Fiscal substituto" value={contrato.fiscal_substituto} />
           <Item label="Gestor titular" value={contrato.gestor_titular} />
           <Item label="Gestor substituto" value={contrato.gestor_substituto} />
         </Card>
-
 
         <Card title="Valores e orçamento">
           <Item label="Valor global" value={formatarValor(contrato.valor_global)} />
@@ -269,13 +304,17 @@ export default function DetalhesContrato() {
           <Item label="Conta vinculada" value={contrato.conta_vinculada} />
         </Card>
 
-
         <Card title="Verba">
           <Item label="Descrição" value={contrato.verba?.descricao} />
-          <Item label="Valor disponível" value={formatarValor(contrato.verba?.valor_disponivel ?? null)} />
-          <Item label="Valor utilizado" value={formatarValor(contrato.verba?.valor_utilizado ?? null)} />
+          <Item
+            label="Valor disponível"
+            value={formatarValor(contrato.verba?.valor_disponivel ?? null)}
+          />
+          <Item
+            label="Valor utilizado"
+            value={formatarValor(contrato.verba?.valor_utilizado ?? null)}
+          />
         </Card>
-
 
         <Card title="Representante legal">
           <Item label="Nome" value={contrato.representante_legal} />
@@ -285,20 +324,27 @@ export default function DetalhesContrato() {
           <Item label="Endereço postal" value={contrato.endereco_postal} />
         </Card>
 
-
         <Card title="Prorrogações">
           {contrato.prorrogacao && contrato.prorrogacao.length > 0 ? (
             contrato.prorrogacao.map((item) => (
               <View key={item.id_prorrogacao} style={styles.subCard}>
-                <Item label="Novo prazo" value={item.novo_prazo !== null ? `${item.novo_prazo} meses` : null} />
+                <Item
+                  label="Novo prazo"
+                  value={
+                    item.novo_prazo !== null
+                      ? `${item.novo_prazo} meses`
+                      : null
+                  }
+                />
                 <Item label="Novo valor" value={formatarValor(item.novo_valor)} />
               </View>
             ))
           ) : (
-            <Text style={styles.semInformacao}>Nenhuma prorrogação registrada.</Text>
+            <Text style={styles.semInformacao}>
+              Nenhuma prorrogação registrada.
+            </Text>
           )}
         </Card>
-
 
         <Card title="Pagamentos">
           {contrato.pagamento && contrato.pagamento.length > 0 ? (
@@ -309,33 +355,104 @@ export default function DetalhesContrato() {
               </View>
             ))
           ) : (
-            <Text style={styles.semInformacao}>Nenhum pagamento registrado.</Text>
+            <Text style={styles.semInformacao}>
+              Nenhum pagamento registrado.
+            </Text>
           )}
         </Card>
-
 
         <Card title="Notificações">
-          {contrato.notificacao && contrato.notificacao.length > 0 ? (
-            contrato.notificacao.map((item) => (
-              <View key={item.id_notificacao} style={styles.subCard}>
-                <Item label="Tipo" value={item.tipo_notificacao?.tipo} />
-                <Item label="Título" value={item.titulo} />
-                <Item label="Descrição" value={item.descricao} />
-                <Item label="Tempo para envio" value={item.tempo_envio !== null ? `${item.tempo_envio} dias` : null} />
-                <Item label="Data de criação" value={formatarDataHora(item.data_criacao)} />
-              </View>
-            ))
-          ) : (
-            <Text style={styles.semInformacao}>Nenhuma notificação registrada.</Text>
-          )}
+          <View style={styles.notificacaoResumo}>
+            <View style={styles.notificacaoInfo}>
+              <Text style={styles.notificacaoQuantidade}>
+                {contrato.notificacao?.length || 0} notificações
+              </Text>
+              <Text style={styles.notificacaoDescricao}>
+                Histórico de notificações deste contrato
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.botaoHistorico}
+              onPress={() => setMostrarHistorico(true)}
+            >
+              <Text style={styles.textoBotaoHistorico}>Ver histórico</Text>
+            </TouchableOpacity>
+          </View>
         </Card>
+
+        <Modal
+          visible={mostrarHistorico}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setMostrarHistorico(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalHistorico}>
+              <View style={styles.modalCabecalho}>
+                <Text style={styles.modalTitulo}>
+                  Histórico de notificações
+                </Text>
+
+                <TouchableOpacity
+                  onPress={() => setMostrarHistorico(false)}
+                  style={styles.fecharModalButton}
+                >
+                  <Feather name="x" size={24} color="#555" />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.modalConteudo}
+              >
+                {contrato.notificacao && contrato.notificacao.length > 0 ? (
+                  contrato.notificacao.map((item) => (
+                    <View
+                      key={item.id_notificacao}
+                      style={styles.subCardNotificacao}
+                    >
+                      <Item
+                        label="Tipo"
+                        value={item.tipo_notificacao?.tipo}
+                      />
+                      <Item label="Título" value={item.titulo} />
+                      <Item label="Descrição" value={item.descricao} />
+                      <Item
+                        label="Tempo para envio"
+                        value={
+                          item.tempo_envio !== null
+                            ? `${item.tempo_envio} dias`
+                            : null
+                        }
+                      />
+                      <Item
+                        label="Data de criação"
+                        value={formatarDataHora(item.data_criacao)}
+                      />
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.semInformacao}>
+                    Nenhuma notificação registrada.
+                  </Text>
+                )}
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     </PesquisaContext.Provider>
   );
 }
 
-
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
+function Card({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <View style={styles.card}>
       <Text style={styles.secaoTitulo}>{title}</Text>
@@ -344,8 +461,10 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 
-
-function Item({ label, value }: {
+function Item({
+  label,
+  value,
+}: {
   label: string;
   value: string | number | null | undefined;
 }) {
@@ -355,9 +474,7 @@ function Item({ label, value }: {
     label.toLowerCase().includes(pesquisa) ||
     String(value ?? "").toLowerCase().includes(pesquisa);
 
-
   if (!corresponde) return null;
-
 
   return (
     <View style={styles.item}>
@@ -370,7 +487,6 @@ function Item({ label, value }: {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -522,7 +638,73 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
+  notificacaoResumo: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  notificacaoInfo: {
+    flex: 1,
+    marginRight: 15,
+  },
+  notificacaoQuantidade: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 4,
+  },
+  notificacaoDescricao: {
+    fontSize: 13,
+    color: "#777",
+  },
+  botaoHistorico: {
+    backgroundColor: "#006C5B",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+  },
+  textoBotaoHistorico: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    justifyContent: "flex-end",
+  },
+  modalHistorico: {
+    backgroundColor: "#FFFFFF",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    maxHeight: "85%",
+  },
+  modalCabecalho: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+  },
+  modalTitulo: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  fecharModalButton: {
+    padding: 4,
+  },
+  modalConteudo: {
+    paddingTop: 15,
+    paddingBottom: 20,
+  },
+  subCardNotificacao: {
+    backgroundColor: "#F5F3F4",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 10,
+  },
 });
-
-
-
