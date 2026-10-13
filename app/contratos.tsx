@@ -16,15 +16,14 @@ import { supabaseFetch } from "../lib/supabase";
 interface Contrato {
   id_contrato: number;
   identificador_contrato: string;
-  objeto_contrato: string | null;
   numero_processo_celebracao: string | null;
   data_inicio: string | null;
   data_fim: string | null;
   valor_global: number | null;
 
   empresa: {
-    razao_social: string;
-    nome_fantasia: string | null;
+    natureza_contrato: string;
+    nome_contratada: string | null;
   };
 
   situacao_contrato: {
@@ -42,7 +41,7 @@ export default function Contratos() {
   async function buscarContratos() {
   try {
    const dados = await supabaseFetch(
-  "contrato?select=id_contrato,identificador_contrato,objeto_contrato,numero_processo_celebracao,data_inicio,data_fim,valor_global,empresa(razao_social,nome_fantasia),situacao_contrato(situacao)"
+  "contrato?select=id_contrato,identificador_contrato,numero_processo_celebracao,data_inicio,data_fim,valor_global,empresa(natureza_contrato,nome_contratada),situacao_contrato(situacao)"
 );
 
     console.log("CONTRATOS RECEBIDOS:", dados);
@@ -61,16 +60,13 @@ export default function Contratos() {
     const textoBusca = busca.toLowerCase();
 
     return (
-      contrato.objeto_contrato
+      contrato.empresa?.nome_contratada
         ?.toLowerCase()
         .includes(textoBusca) ||
       contrato.numero_processo_celebracao
         ?.toLowerCase()
         .includes(textoBusca) ||
-      contrato.empresa?.razao_social
-        ?.toLowerCase()
-        .includes(textoBusca) ||
-      contrato.empresa?.nome_fantasia
+      contrato.empresa?.natureza_contrato
         ?.toLowerCase()
         .includes(textoBusca)
     );
@@ -151,13 +147,13 @@ export default function Contratos() {
 </Text>
 
 <Text style={styles.cardTitulo}>
-  {item.objeto_contrato}
+  {item.empresa?.nome_contratada}
 </Text>
 
+
             <Text style={styles.cardTexto}>
-              Fornecedor:{" "}
-              {item.empresa?.nome_fantasia ||
-                item.empresa?.razao_social ||
+              Natureza do contrato:{" "}
+              {item.empresa?.natureza_contrato ||
                 "Não informado"}
             </Text>
 

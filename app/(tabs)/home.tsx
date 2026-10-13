@@ -22,8 +22,8 @@ interface Contrato {
   data_fim: string | null;
 
   empresa: {
-    razao_social: string;
-    nome_fantasia: string | null;
+    natureza_contrato: string;
+    nome_contratada: string | null;
   } | null;
 
   situacao_contrato: {
@@ -40,7 +40,7 @@ export default function Home() {
     async function buscarContratos() {
       try {
         const dados = await supabaseFetch(
-          "contrato?select=id_contrato,identificador_contrato,objeto_contrato,data_inicio,data_fim,empresa(razao_social,nome_fantasia),situacao_contrato(situacao)&order=id_contrato.desc&limit=5"
+          "contrato?select=id_contrato,identificador_contrato,objeto_contrato,data_inicio,data_fim,empresa(natureza_contrato,nome_contratada),situacao_contrato(situacao)&order=id_contrato.desc&limit=5"
         );
 
         console.log("CONTRATOS RECENTES:", dados);
@@ -125,7 +125,7 @@ export default function Home() {
                   </Text>
 
                   <Text style={styles.cardText}>
-                    {item.objeto_contrato ||
+                    {item.empresa?.nome_contratada ||
                       "Objeto não informado"}
                   </Text>
                 </View>
@@ -144,8 +144,8 @@ export default function Home() {
               </View>
 
               <Text style={styles.cardSubtitle}>
-                Nome da empresa:{" "}
-                {item.empresa?.nome_fantasia ||
+                Natureza do contrato:{" "}
+                {item.empresa?.natureza_contrato ||
                   "Não informado"}
               </Text>
 

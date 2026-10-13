@@ -26,16 +26,20 @@ interface Lembrete {
   descricao: string | null;
   tempo_envio: number | null;
   data_criacao: string | null;
+ 
+contrato: {
+  identificador_contrato: string;
+  data_fim: string | null;
 
-  contrato: {
-    identificador_contrato: string;
-    objeto_contrato: string | null;
-    data_fim: string | null;
-
-    situacao_contrato: {
-      situacao: string;
-    } | null;
+  empresa: {
+    nome_contratada: string | null;
   } | null;
+
+  situacao_contrato: {
+    situacao: string;
+  } | null;
+} | null;
+
 
   tipo_notificacao: {
     tipo: string;
@@ -53,7 +57,7 @@ export default function Lembretes() {
   async function buscarLembretes() {
     try {
       const dados = await supabaseFetch(
-        "notificacao?select=id_notificacao,titulo,descricao,tempo_envio,data_criacao,tipo_notificacao(tipo),contrato(identificador_contrato,objeto_contrato,data_fim,situacao_contrato(situacao))&order=data_criacao.desc"
+        "notificacao?select=id_notificacao,titulo,descricao,tempo_envio,data_criacao,tipo_notificacao(tipo),contrato(identificador_contrato,data_fim,situacao_contrato(situacao), empresa(nome_contratada))&order=data_criacao.desc"
       );
 
       console.log("LEMBRETES RECEBIDOS:", dados);
@@ -291,9 +295,8 @@ export default function Lembretes() {
                 </Text>
 
                 <Text style={styles.subtituloCard}>
-                  {item.contrato?.objeto_contrato ||
-                    item.descricao ||
-                    "Contrato não informado"}
+                   Nome da contratada:{" "}
+                  {item.contrato?.empresa?.nome_contratada}
                 </Text>
 
                 {item.contrato?.data_fim && (

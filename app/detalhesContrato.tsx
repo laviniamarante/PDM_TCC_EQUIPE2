@@ -17,7 +17,6 @@ interface Contrato {
   numero_processo_celebracao: string | null;
   prazo_restante: number | null;
   nota_empenho: string | null;
-  natureza_contrato: string | null;
   portaria_fiscalizacao: string | null;
   objeto_contrato: string | null;
   fiscal_substituto: string | null;
@@ -56,7 +55,8 @@ interface Contrato {
     telefone: string | null;
     endereco: string | null;
     razao_social: string;
-    nome_fantasia: string | null;
+    nome_contratada: string | null;
+    natureza_contrato: string | null;
   } | null;
   categoria: { id_categoria: number; nome: string } | null;
   verba: {
@@ -222,7 +222,7 @@ export default function DetalhesContrato() {
         <View style={styles.card}>
           <Text style={styles.secaoTitulo}>Identificação do contrato</Text>
           <Text style={styles.cardTitulo}>
-            {contrato.objeto_contrato || "Objeto não informado"}
+            {contrato.empresa?.nome_contratada || "Objeto não informado"}
           </Text>
           <View
             style={renderStatus(
@@ -259,8 +259,7 @@ export default function DetalhesContrato() {
         </View>
 
         <Card title="Empresa">
-          <Item label="Razão social" value={contrato.empresa?.razao_social} />
-          <Item label="Nome fantasia" value={contrato.empresa?.nome_fantasia} />
+          <Item label="Nome contratada" value={contrato.empresa?.nome_contratada} />
           <Item label="CNPJ" value={contrato.empresa?.cnpj} />
           <Item label="E-mail" value={contrato.empresa?.email} />
           <Item label="Telefone" value={contrato.empresa?.telefone} />
@@ -271,7 +270,7 @@ export default function DetalhesContrato() {
           <Item label="Categoria" value={contrato.categoria?.nome} />
           <Item label="Situação do contrato" value={contrato.situacao_contrato?.situacao} />
           <Item label="Situação no governo" value={contrato.situacao_gov} />
-          <Item label="Natureza do contrato" value={contrato.natureza_contrato} />
+          <Item label="Natureza do contrato" value={contrato.empresa?.natureza_contrato} />
         </Card>
 
         <Card title="Processos e documentos">
