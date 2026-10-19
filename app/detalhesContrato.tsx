@@ -58,7 +58,6 @@ interface Contrato {
     nome_contratada: string | null;
     natureza_contrato: string | null;
   } | null;
-  categoria: { id_categoria: number; nome: string } | null;
   verba: {
     id_verba: number;
     descricao: string;
@@ -110,7 +109,7 @@ export default function DetalhesContrato() {
         setCarregando(true);
         setErro("");
         const dados = await supabaseFetch(
-          `contrato?select=*,empresa(*),categoria(*),verba(*),situacao_contrato(*),prorrogacao(*),pagamento(*),notificacao(*,tipo_notificacao(*))&id_contrato=eq.${id}`
+          `contrato?select=*,empresa(*),verba(*),situacao_contrato(*),prorrogacao(*),pagamento(*),notificacao(*,tipo_notificacao(*))&id_contrato=eq.${id}`
         );
         console.log("DETALHES DO CONTRATO:", dados);
 
@@ -267,7 +266,6 @@ export default function DetalhesContrato() {
         </Card>
 
         <Card title="Classificação">
-          <Item label="Categoria" value={contrato.categoria?.nome} />
           <Item label="Situação do contrato" value={contrato.situacao_contrato?.situacao} />
           <Item label="Situação no governo" value={contrato.situacao_gov} />
           <Item label="Natureza do contrato" value={contrato.empresa?.natureza_contrato} />
@@ -478,11 +476,18 @@ function Item({
   return (
     <View style={styles.item}>
       <Text style={styles.label}>{label}</Text>
-      <Text style={styles.valor}>
-        {value !== null && value !== undefined && value !== ""
-          ? String(value)
-          : "Não informado"}
-      </Text>
+      
+<Text
+  style={[
+    styles.valor,
+    label === "Objeto do contrato" && styles.objetoJustificado,
+  ]}
+>
+  {value !== null && value !== undefined && value !== ""
+    ? String(value)
+    : "Não informado"}
+</Text>
+
     </View>
   );
 }
@@ -706,4 +711,8 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 10,
   },
+  objetoJustificado: {
+  textAlign: "justify",
+  lineHeight: 22,
+},
 });
