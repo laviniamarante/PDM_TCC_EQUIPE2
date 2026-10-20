@@ -220,18 +220,9 @@ export default function DetalhesContrato() {
 
         <View style={styles.card}>
           <Text style={styles.secaoTitulo}>Identificação do contrato</Text>
-          <Text style={styles.cardTitulo}>
-            {contrato.empresa?.nome_contratada || "Objeto não informado"}
-          </Text>
-          <View
-            style={renderStatus(
-              contrato?.situacao_contrato?.situacao ?? "Pendente"
-            )}
-          >
-            <Text style={styles.statusText}>
-              {contrato?.situacao_contrato?.situacao ?? "Não informado"}
-            </Text>
+          <View>
           </View>
+          <Item label="Nome da contratada" value={contrato.empresa?.nome_contratada} />
           <Item label="Objeto do contrato" value={contrato.objeto_contrato} />
           <Item label="Identificador do contrato" value={contrato.identificador_contrato} />
           <Item

@@ -158,7 +158,13 @@ export default function Contratos() {
             </Text>
 
             <Text style={styles.cardTexto}>
-              Início:{" "}
+              Status:{" "}
+              {item.situacao_contrato?.situacao ||
+                "Não informado"}
+            </Text>
+            
+            <Text style={styles.cardTexto}>
+              Data de início:{" "}
               {item.data_inicio
                 ? new Date(item.data_inicio).toLocaleDateString(
                     "pt-BR"
@@ -167,28 +173,12 @@ export default function Contratos() {
             </Text>
 
             <Text style={styles.cardTexto}>
-              Vencimento:{" "}
+              Data de vencimento:{" "}
               {item.data_fim
                 ? new Date(item.data_fim).toLocaleDateString(
                     "pt-BR"
                   )
                 : "Não informado"}
-            </Text>
-
-            <Text style={styles.cardTexto}>
-              Valor:{" "}
-              {item.valor_global !== null
-                ? item.valor_global.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })
-                : "Não informado"}
-            </Text>
-
-            <Text style={styles.cardTexto}>
-              Status:{" "}
-              {item.situacao_contrato?.situacao ||
-                "Não informado"}
             </Text>
           </TouchableOpacity>
         )}

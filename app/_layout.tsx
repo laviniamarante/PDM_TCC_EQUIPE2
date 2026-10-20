@@ -1,15 +1,23 @@
+
 import { Drawer } from "expo-router/drawer";
 
 export default function RootLayout() {
   return (
     <Drawer
+      initialRouteName="index"
       screenOptions={{
         headerShown: false,
-
         drawerActiveTintColor: "#006C5B",
         drawerActiveBackgroundColor: "#A8D5CE",
       }}
     >
+      <Drawer.Screen
+        name="index"
+        options={{
+          drawerItemStyle: { display: "none" },
+        }}
+      />
+
       <Drawer.Screen
         name="(tabs)"
         options={{
@@ -20,13 +28,6 @@ export default function RootLayout() {
 
       <Drawer.Screen
         name="login"
-        options={{
-          drawerItemStyle: { display: "none" },
-        }}
-      />
-
-      <Drawer.Screen
-        name="index"
         options={{
           drawerItemStyle: { display: "none" },
         }}
