@@ -102,6 +102,7 @@ export default function DetalhesContrato() {
   const [erro, setErro] = useState("");
   const [pesquisa, setPesquisa] = useState("");
   const [mostrarHistorico, setMostrarHistorico] = useState(false);
+  const [novoComentario, setNovoComentario] = useState("");
 
   useEffect(() => {
     async function buscarContrato() {
@@ -368,6 +369,39 @@ export default function DetalhesContrato() {
             </TouchableOpacity>
           </View>
         </Card>
+        <Card title="Comentários e solicitações">
+  <View style={styles.comentarioVazio}>
+    <Feather name="message-circle" size={30} color="#999" />
+    <Text style={styles.comentarioVazioTexto}>
+      Nenhum comentário registrado.
+    </Text>
+  </View>
+
+  <Text style={styles.label}>Novo comentário</Text>
+
+  <TextInput
+    style={styles.inputComentario}
+    placeholder="Descreva sua solicitação ou observação..."
+    placeholderTextColor="#999"
+    multiline
+    numberOfLines={5}
+    textAlignVertical="top"
+    value={novoComentario}
+    onChangeText={setNovoComentario}
+  />
+
+  <TouchableOpacity
+    style={styles.botaoComentario}
+    onPress={() =>
+      alert("O envio dos comentários será conectado ao banco de dados na próxima etapa.")
+    }
+  >
+    <Feather name="send" size={17} color="#FFFFFF" />
+    <Text style={styles.textoBotaoComentario}>
+      Enviar comentário
+    </Text>
+  </TouchableOpacity>
+</Card>
 
         <Modal
           visible={mostrarHistorico}
@@ -424,10 +458,15 @@ export default function DetalhesContrato() {
                   <Text style={styles.semInformacao}>
                     Nenhuma notificação registrada.
                   </Text>
+
+                  
                 )}
               </ScrollView>
             </View>
           </View>
+
+
+
         </Modal>
       </ScrollView>
     </PesquisaContext.Provider>
@@ -706,4 +745,48 @@ const styles = StyleSheet.create({
   textAlign: "justify",
   lineHeight: 22,
 },
+
+comentarioVazio: {
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "#F5F3F4",
+  borderRadius: 8,
+  padding: 20,
+  marginBottom: 20,
+},
+
+comentarioVazioTexto: {
+  color: "#777",
+  fontSize: 14,
+  marginTop: 10,
+},
+
+inputComentario: {
+  minHeight: 120,
+  borderWidth: 1,
+  borderColor: "#ccc",
+  borderRadius: 8,
+  padding: 12,
+  fontSize: 14,
+  color: "#333",
+  marginTop: 8,
+  marginBottom: 15,
+},
+
+botaoComentario: {
+  backgroundColor: "#006C5B",
+  padding: 14,
+  borderRadius: 8,
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+},
+
+textoBotaoComentario: {
+  color: "#FFFFFF",
+  fontWeight: "600",
+  fontSize: 14,
+},
+
 });

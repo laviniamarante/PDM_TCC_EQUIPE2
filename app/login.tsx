@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
 import {
   Image,
   StyleSheet,
@@ -17,26 +18,45 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
 
-  function entrar() {
-    setErro("");
+  
+async function entrar() {
+  setErro("");
 
-    if (!email.trim()) {
-      setErro("Digite seu email.");
-      return;
-    }
-
-    const emailValido = /\S+@\S+\.\S+/;
-
-    if (!emailValido.test(email)) {
-      setErro("Digite um email válido.");
-      return;
-    }
-    if (!senha.trim()) {
-      setErro("Digite sua senha.");
-      return;
-    }
-   router.replace("/(tabs)/home");
+  if (!email.trim()) {
+    setErro("Digite seu email.");
+    return;
   }
+
+  const emailValido = /\S+@\S+\.\S+/;
+
+  if (!emailValido.test(email)) {
+    setErro("Digite um email válido.");
+    return;
+  }
+
+  if (!senha.trim()) {
+    setErro("Digite sua senha.");
+    return;
+  }
+
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: senha,
+    });
+
+    if (error) {
+      setErro("Email ou senha incorretos.");
+      return;
+    }
+
+    if (data.user) {
+      router.replace("/(tabs)/home");
+    }
+  } catch (error) {
+    setErro("Não foi possível realizar o login. Verifique sua conexão.");
+  }
+}
 
   const { saiu } = useLocalSearchParams(); useEffect(() => { if (saiu === "true") { setEmail(""); setSenha(""); } }, [saiu]);
 
