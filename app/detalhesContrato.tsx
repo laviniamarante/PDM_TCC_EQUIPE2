@@ -1,11 +1,11 @@
 import {
   ActivityIndicator, Modal, ScrollView, StyleSheet, Text,
-  TouchableOpacity, View, TextInput,
+  TouchableOpacity, View, TextInput, Linking,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabaseFetch } from "../lib/supabase";
+import { supabase, supabaseFetch } from "../lib/supabase";
 
 interface Contrato {
   id_contrato: number;
@@ -103,6 +103,45 @@ export default function DetalhesContrato() {
   const [pesquisa, setPesquisa] = useState("");
   const [mostrarHistorico, setMostrarHistorico] = useState(false);
   const [novoComentario, setNovoComentario] = useState("");
+  const [comentarios, setComentarios] = useState<any[]>([]);
+  const [enviandoComentario, setEnviandoComentario] = useState(false);
+
+  const idContrato = Array.isArray(id) ? id[0] : id;
+
+async function carregarComentarios() {
+  try {
+    const { data, error } = await supabase
+      .from("comentario_fiscal")
+      .select("*")
+      .eq("id_contrato", Number(idContrato))
+      .order("data_criacao", { ascending: false });
+
+    if (error) throw error;
+
+    setComentarios(data || []);
+  } catch (erro) {
+    console.log("Erro ao carregar comentários:", erro);
+  }
+}
+async function abrirLink(link: string) {
+  if (!link) return;
+
+  const url = link.startsWith("http://") || link.startsWith("https://")
+    ? link
+    : `https://${link}`;
+
+  try {
+    await Linking.openURL(url);
+  } catch {
+    alert("Não foi possível abrir este link.");
+  }
+}
+
+useEffect(() => {
+  if (idContrato) {
+    carregarComentarios();
+  }
+}, [idContrato]);
 
   useEffect(() => {
     async function buscarContrato() {
@@ -132,6 +171,58 @@ export default function DetalhesContrato() {
     if (id) buscarContrato();
   }, [id]);
 
+  async function enviarComentario() {
+  if (!novoComentario.trim()) {
+    alert("Digite um comentário antes de enviar.");
+    return;
+  }
+
+  try {
+    setEnviandoComentario(true);
+
+    // Identifica o usuário autenticado
+    const { data: { user }, error: erroUsuario } =
+      await supabase.auth.getUser();
+
+    if (erroUsuario) throw erroUsuario;
+
+    if (!user) {
+      throw new Error("Usuário não autenticado.");
+    }
+
+    // Busca o cadastro da pessoa
+    const { data: pessoa, error: erroPessoa } = await supabase
+      .from("pessoa")
+      .select("id_pessoa")
+      .eq("id_auth", user.id)
+      .single();
+
+    if (erroPessoa) throw erroPessoa;
+
+    // Salva o comentário
+    const { error: erroEnvio } = await supabase
+      .from("comentario_fiscal")
+      .insert({
+        id_contrato: Number(idContrato),
+        id_pessoa: pessoa.id_pessoa,
+        comentario: novoComentario.trim(),
+      });
+
+    if (erroEnvio) throw erroEnvio;
+
+    setNovoComentario("");
+    alert("Comentário enviado com sucesso!");
+
+    await carregarComentarios();
+
+  } catch (erro) {
+    console.log("Erro ao enviar comentário:", erro);
+    alert("Não foi possível enviar o comentário. Verifique sua conexão e tente novamente.");
+  } finally {
+    setEnviandoComentario(false);
+  }
+}
+
   const formatarData = (data: string | null) =>
     data ? new Date(data).toLocaleDateString("pt-BR") : "Não informado";
 
@@ -147,12 +238,6 @@ export default function DetalhesContrato() {
   };
 
   const formatarBooleano = (valor: boolean) => valor ? "Sim" : "Não";
-
-  const renderStatus = (status: string) => {
-    if (status === "Ativo") return styles.statusAtivo;
-    if (status === "Vencido") return styles.statusVencido;
-    return styles.statusPendente;
-  };
 
   const voltar = () =>
     router.replace(origem === "contratos" ? "/contratos" : "/(tabs)/home");
@@ -221,8 +306,6 @@ export default function DetalhesContrato() {
 
         <View style={styles.card}>
           <Text style={styles.secaoTitulo}>Identificação do contrato</Text>
-          <View>
-          </View>
           <Item label="Nome da contratada" value={contrato.empresa?.nome_contratada} />
           <Item label="Objeto do contrato" value={contrato.objeto_contrato} />
           <Item label="Identificador do contrato" value={contrato.identificador_contrato} />
@@ -269,9 +352,32 @@ export default function DetalhesContrato() {
           <Item label="Dados da licitação" value={contrato.dados_licitacao} />
           <Item label="Processo de gestão" value={contrato.processo_gestao} />
           <Item label="Portaria de fiscalização" value={contrato.portaria_fiscalizacao} />
-          <Item label="Link da pasta de gestão" value={contrato.link_pasta_gestao} />
-          <Item label="Link do processo eletrônico" value={contrato.link_processo_eletronico} />
-          <Item label="Link do pregão SRP" value={contrato.link_pregao_srp} />
+         {contrato.link_pasta_gestao && (
+  <View style={styles.item}>
+    <Text style={styles.label}>Link da pasta de gestão</Text>
+    <TouchableOpacity onPress={() => abrirLink(contrato.link_pasta_gestao!)}>
+      <Text style={styles.linkTexto}>Abrir pasta de gestão</Text>
+    </TouchableOpacity>
+  </View>
+)}
+
+{contrato.link_processo_eletronico && (
+  <View style={styles.item}>
+    <Text style={styles.label}>Link do processo eletrônico</Text>
+    <TouchableOpacity onPress={() => abrirLink(contrato.link_processo_eletronico!)}>
+      <Text style={styles.linkTexto}>Abrir processo eletrônico</Text>
+    </TouchableOpacity>
+  </View>
+)}
+
+{contrato.link_pregao_srp && (
+  <View style={styles.item}>
+    <Text style={styles.label}>Link do pregão SRP</Text>
+    <TouchableOpacity onPress={() => abrirLink(contrato.link_pregao_srp!)}>
+      <Text style={styles.linkTexto}>Abrir pregão SRP</Text>
+    </TouchableOpacity>
+  </View>
+)}
         </Card>
 
         <Card title="Fiscalização e gestão">
@@ -370,12 +476,30 @@ export default function DetalhesContrato() {
           </View>
         </Card>
         <Card title="Comentários e solicitações">
+     {comentarios.length === 0 ? (
   <View style={styles.comentarioVazio}>
     <Feather name="message-circle" size={30} color="#999" />
     <Text style={styles.comentarioVazioTexto}>
       Nenhum comentário registrado.
     </Text>
   </View>
+) : (
+  comentarios.map((item) => (
+    <View key={item.id_comentario} style={styles.comentarioVazio}>
+      <Text style={styles.label}>
+        {new Date(item.data_criacao).toLocaleString("pt-BR")}
+      </Text>
+
+      <Text style={styles.comentarioVazioTexto}>
+        {item.comentario}
+      </Text>
+
+      <Text style={styles.label}>
+        Status: {item.status}
+      </Text>
+    </View>
+  ))
+)}
 
   <Text style={styles.label}>Novo comentário</Text>
 
@@ -392,9 +516,9 @@ export default function DetalhesContrato() {
 
   <TouchableOpacity
     style={styles.botaoComentario}
-    onPress={() =>
-      alert("O envio dos comentários será conectado ao banco de dados na próxima etapa.")
-    }
+    onPress={enviarComentario}
+    disabled={enviandoComentario}
+    
   >
     <Feather name="send" size={17} color="#FFFFFF" />
     <Text style={styles.textoBotaoComentario}>
@@ -787,6 +911,12 @@ textoBotaoComentario: {
   color: "#FFFFFF",
   fontWeight: "600",
   fontSize: 14,
+},
+linkTexto: {
+  color: "#006C5B",
+  textDecorationLine: "underline",
+  fontSize: 14,
+  marginTop: 4,
 },
 
 });
