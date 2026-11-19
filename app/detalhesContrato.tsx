@@ -239,6 +239,7 @@ useEffect(() => {
 
   const formatarBooleano = (valor: boolean) => valor ? "Sim" : "Não";
 
+
   const voltar = () =>
     router.replace(origem === "contratos" ? "/contratos" : "/(tabs)/home");
 
