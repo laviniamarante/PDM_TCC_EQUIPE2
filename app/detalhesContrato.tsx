@@ -1,6 +1,14 @@
 import {
-  ActivityIndicator, Modal, ScrollView, StyleSheet, Text,
-  TouchableOpacity, View, TextInput, Linking,
+  ActivityIndicator,
+  Alert,
+  Linking,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -108,40 +116,42 @@ export default function DetalhesContrato() {
 
   const idContrato = Array.isArray(id) ? id[0] : id;
 
-async function carregarComentarios() {
-  try {
-    const { data, error } = await supabase
-      .from("comentario_fiscal")
-      .select("*")
-      .eq("id_contrato", Number(idContrato))
-      .order("data_criacao", { ascending: false });
+  async function carregarComentarios() {
+    try {
+      const { data, error } = await supabase
+        .from("comentario_fiscal")
+        .select("*")
+        .eq("id_contrato", Number(idContrato))
+        .order("data_criacao", { ascending: false });
 
-    if (error) throw error;
+      if (error) throw error;
 
-    setComentarios(data || []);
-  } catch (erro) {
-    console.log("Erro ao carregar comentários:", erro);
+      setComentarios(data || []);
+    } catch (erro) {
+      console.log("Erro ao carregar comentários:", erro);
+    }
   }
-}
-async function abrirLink(link: string) {
-  if (!link) return;
 
-  const url = link.startsWith("http://") || link.startsWith("https://")
-    ? link
-    : `https://${link}`;
+  async function abrirLink(link: string) {
+    if (!link) return;
 
-  try {
-    await Linking.openURL(url);
-  } catch {
-    alert("Não foi possível abrir este link.");
+    const url =
+      link.startsWith("http://") || link.startsWith("https://")
+        ? link
+        : `https://${link}`;
+
+    try {
+      await Linking.openURL(url);
+    } catch {
+      Alert.alert("Erro", "Não foi possível abrir este link.");
+    }
   }
-}
 
-useEffect(() => {
-  if (idContrato) {
-    carregarComentarios();
-  }
-}, [idContrato]);
+  useEffect(() => {
+    if (idContrato) {
+      carregarComentarios();
+    }
+  }, [idContrato]);
 
   useEffect(() => {
     async function buscarContrato() {
@@ -149,7 +159,7 @@ useEffect(() => {
         setCarregando(true);
         setErro("");
         const dados = await supabaseFetch(
-          `contrato?select=*,empresa(*),verba(*),situacao_contrato(*),prorrogacao(*),pagamento(*),notificacao(*,tipo_notificacao(*))&id_contrato=eq.${id}`
+          `contrato?select=*,empresa(*),verba(*),situacao_contrato(*),prorrogacao(*),pagamento(*),notificacao(*,tipo_notificacao(*))&id_contrato=eq.${idContrato}`
         );
         console.log("DETALHES DO CONTRATO:", dados);
 
@@ -168,60 +178,64 @@ useEffect(() => {
       }
     }
 
-    if (id) buscarContrato();
-  }, [id]);
+    if (idContrato) buscarContrato();
+  }, [idContrato]);
 
   async function enviarComentario() {
-  if (!novoComentario.trim()) {
-    alert("Digite um comentário antes de enviar.");
-    return;
-  }
-
-  try {
-    setEnviandoComentario(true);
-
-    // Identifica o usuário autenticado
-    const { data: { user }, error: erroUsuario } =
-      await supabase.auth.getUser();
-
-    if (erroUsuario) throw erroUsuario;
-
-    if (!user) {
-      throw new Error("Usuário não autenticado.");
+    if (!novoComentario.trim()) {
+      Alert.alert("Atenção", "Digite um comentário antes de enviar.");
+      return;
     }
 
-    // Busca o cadastro da pessoa
-    const { data: pessoa, error: erroPessoa } = await supabase
-      .from("pessoa")
-      .select("id_pessoa")
-      .eq("id_auth", user.id)
-      .single();
+    try {
+      setEnviandoComentario(true);
 
-    if (erroPessoa) throw erroPessoa;
+      // Identifica o usuário autenticado
+      const {
+        data: { user },
+        error: erroUsuario,
+      } = await supabase.auth.getUser();
 
-    // Salva o comentário
-    const { error: erroEnvio } = await supabase
-      .from("comentario_fiscal")
-      .insert({
-        id_contrato: Number(idContrato),
-        id_pessoa: pessoa.id_pessoa,
-        comentario: novoComentario.trim(),
-      });
+      if (erroUsuario) throw erroUsuario;
 
-    if (erroEnvio) throw erroEnvio;
+      if (!user) {
+        throw new Error("Usuário não autenticado.");
+      }
 
-    setNovoComentario("");
-    alert("Comentário enviado com sucesso!");
+      // Busca o cadastro da pessoa
+      const { data: pessoa, error: erroPessoa } = await supabase
+        .from("pessoa")
+        .select("id_pessoa")
+        .eq("id_auth", user.id)
+        .single();
 
-    await carregarComentarios();
+      if (erroPessoa) throw erroPessoa;
 
-  } catch (erro) {
-    console.log("Erro ao enviar comentário:", erro);
-    alert("Não foi possível enviar o comentário. Verifique sua conexão e tente novamente.");
-  } finally {
-    setEnviandoComentario(false);
+      // Salva o comentário
+      const { error: erroEnvio } = await supabase
+        .from("comentario_fiscal")
+        .insert({
+          id_contrato: Number(idContrato),
+          id_pessoa: pessoa.id_pessoa,
+          comentario: novoComentario.trim(),
+        });
+
+      if (erroEnvio) throw erroEnvio;
+
+      setNovoComentario("");
+      Alert.alert("Sucesso", "Comentário enviado com sucesso!");
+
+      await carregarComentarios();
+    } catch (erro) {
+      console.log("Erro ao enviar comentário:", erro);
+      Alert.alert(
+        "Erro",
+        "Não foi possível enviar o comentário. Verifique sua conexão e tente novamente."
+      );
+    } finally {
+      setEnviandoComentario(false);
+    }
   }
-}
 
   const formatarData = (data: string | null) =>
     data ? new Date(data).toLocaleDateString("pt-BR") : "Não informado";
@@ -229,7 +243,7 @@ useEffect(() => {
   const formatarDataHora = (data: string | null) =>
     data ? new Date(data).toLocaleString("pt-BR") : "Não informado";
 
-  const formatarValor = (valor: number | null) => {
+  const formatarValor = (valor: number | null | undefined) => {
     if (valor === null || valor === undefined) return "Não informado";
     return valor.toLocaleString("pt-BR", {
       style: "currency",
@@ -237,8 +251,7 @@ useEffect(() => {
     });
   };
 
-  const formatarBooleano = (valor: boolean) => valor ? "Sim" : "Não";
-
+  const formatarBooleano = (valor: boolean) => (valor ? "Sim" : "Não");
 
   const voltar = () =>
     router.replace(origem === "contratos" ? "/contratos" : "/(tabs)/home");
@@ -267,7 +280,7 @@ useEffect(() => {
     <PesquisaContext.Provider value={pesquisa}>
       <ScrollView
         contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
       >
         <View style={styles.topBar} />
 
@@ -295,25 +308,24 @@ useEffect(() => {
             onChangeText={setPesquisa}
             returnKeyType="search"
           />
-          {pesquisa.length > 0 && (
+          {pesquisa.length > 0 ? (
             <TouchableOpacity
               onPress={() => setPesquisa("")}
               style={styles.clearButton}
             >
               <Feather name="x" size={20} color="#777" />
             </TouchableOpacity>
-          )}
+          ) : null}
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.secaoTitulo}>Identificação do contrato</Text>
+        <Card title="Identificação do contrato" icone="file-text">
           <Item label="Nome da contratada" value={contrato.empresa?.nome_contratada} />
           <Item label="Objeto do contrato" value={contrato.objeto_contrato} />
           <Item label="Identificador do contrato" value={contrato.identificador_contrato} />
           <Item
             label="Vigência"
             value={
-              contrato.vigencia !== null
+              contrato.vigencia !== null && contrato.vigencia !== undefined
                 ? `${contrato.vigencia} meses`
                 : null
             }
@@ -324,16 +336,17 @@ useEffect(() => {
           <Item
             label="Prazo restante"
             value={
-              contrato.prazo_restante !== null
+              contrato.prazo_restante !== null &&
+              contrato.prazo_restante !== undefined
                 ? `${contrato.prazo_restante} meses`
                 : null
             }
           />
           <Item label="Data de celebração" value={formatarData(contrato.data_celebracao)} />
           <Item label="Representante legal" value={contrato.representante_legal} />
-        </View>
+        </Card>
 
-        <Card title="Empresa">
+        <Card title="Empresa" icone="briefcase">
           <Item label="Nome contratada" value={contrato.empresa?.nome_contratada} />
           <Item label="CNPJ" value={contrato.empresa?.cnpj} />
           <Item label="E-mail" value={contrato.empresa?.email} />
@@ -341,54 +354,47 @@ useEffect(() => {
           <Item label="Endereço" value={contrato.empresa?.endereco} />
         </Card>
 
-        <Card title="Classificação">
+        <Card title="Classificação" icone="briefcase">
           <Item label="Situação do contrato" value={contrato.situacao_contrato?.situacao} />
           <Item label="Situação no governo" value={contrato.situacao_gov} />
           <Item label="Natureza do contrato" value={contrato.empresa?.natureza_contrato} />
         </Card>
 
-        <Card title="Processos e documentos">
+        <Card title="Processos e documentos" icone="link">
           <Item label="Número do processo de celebração" value={contrato.numero_processo_celebracao} />
           <Item label="Nota de empenho" value={contrato.nota_empenho} />
           <Item label="Dados da licitação" value={contrato.dados_licitacao} />
           <Item label="Processo de gestão" value={contrato.processo_gestao} />
           <Item label="Portaria de fiscalização" value={contrato.portaria_fiscalizacao} />
-         {contrato.link_pasta_gestao && (
-  <View style={styles.item}>
-    <Text style={styles.label}>Link da pasta de gestão</Text>
-    <TouchableOpacity onPress={() => abrirLink(contrato.link_pasta_gestao!)}>
-      <Text style={styles.linkTexto}>Abrir pasta de gestão</Text>
-    </TouchableOpacity>
-  </View>
-)}
 
-{contrato.link_processo_eletronico && (
-  <View style={styles.item}>
-    <Text style={styles.label}>Link do processo eletrônico</Text>
-    <TouchableOpacity onPress={() => abrirLink(contrato.link_processo_eletronico!)}>
-      <Text style={styles.linkTexto}>Abrir processo eletrônico</Text>
-    </TouchableOpacity>
-  </View>
-)}
-
-{contrato.link_pregao_srp && (
-  <View style={styles.item}>
-    <Text style={styles.label}>Link do pregão SRP</Text>
-    <TouchableOpacity onPress={() => abrirLink(contrato.link_pregao_srp!)}>
-      <Text style={styles.linkTexto}>Abrir pregão SRP</Text>
-    </TouchableOpacity>
-  </View>
-)}
+          <LinkItem
+            label="Link da pasta de gestão"
+            texto="Abrir pasta de gestão"
+            link={contrato.link_pasta_gestao}
+            onPress={abrirLink}
+          />
+          <LinkItem
+            label="Link do processo eletrônico"
+            texto="Abrir processo eletrônico"
+            link={contrato.link_processo_eletronico}
+            onPress={abrirLink}
+          />
+          <LinkItem
+            label="Link do pregão SRP"
+            texto="Abrir pregão SRP"
+            link={contrato.link_pregao_srp}
+            onPress={abrirLink}
+          />
         </Card>
 
-        <Card title="Fiscalização e gestão">
+        <Card title="Fiscalização e gestão" icone="user">
           <Item label="Fiscal titular" value={contrato.fiscal_titular} />
           <Item label="Fiscal substituto" value={contrato.fiscal_substituto} />
           <Item label="Gestor titular" value={contrato.gestor_titular} />
           <Item label="Gestor substituto" value={contrato.gestor_substituto} />
         </Card>
 
-        <Card title="Valores e orçamento">
+        <Card title="Valores e orçamento" icone="dollar-sign">
           <Item label="Valor global" value={formatarValor(contrato.valor_global)} />
           <Item label="Valor mensal" value={formatarValor(contrato.valor_mensal)} />
           <Item label="Fonte de recurso" value={contrato.fonte_recurso} />
@@ -400,19 +406,19 @@ useEffect(() => {
           <Item label="Conta vinculada" value={contrato.conta_vinculada} />
         </Card>
 
-        <Card title="Verba">
+        <Card title="Verba" icone="dollar-sign">
           <Item label="Descrição" value={contrato.verba?.descricao} />
           <Item
             label="Valor disponível"
-            value={formatarValor(contrato.verba?.valor_disponivel ?? null)}
+            value={formatarValor(contrato.verba?.valor_disponivel)}
           />
           <Item
             label="Valor utilizado"
-            value={formatarValor(contrato.verba?.valor_utilizado ?? null)}
+            value={formatarValor(contrato.verba?.valor_utilizado)}
           />
         </Card>
 
-        <Card title="Representante legal">
+        <Card title="Representante legal" icone="user">
           <Item label="Nome" value={contrato.representante_legal} />
           <Item label="CPF" value={contrato.cpf_representante} />
           <Item label="RG" value={contrato.rg_representante} />
@@ -420,14 +426,14 @@ useEffect(() => {
           <Item label="Endereço postal" value={contrato.endereco_postal} />
         </Card>
 
-        <Card title="Prorrogações">
+        <Card title="Prorrogações" icone="calendar">
           {contrato.prorrogacao && contrato.prorrogacao.length > 0 ? (
             contrato.prorrogacao.map((item) => (
               <View key={item.id_prorrogacao} style={styles.subCard}>
                 <Item
                   label="Novo prazo"
                   value={
-                    item.novo_prazo !== null
+                    item.novo_prazo !== null && item.novo_prazo !== undefined
                       ? `${item.novo_prazo} meses`
                       : null
                   }
@@ -442,7 +448,7 @@ useEffect(() => {
           )}
         </Card>
 
-        <Card title="Pagamentos">
+        <Card title="Pagamentos" icone="dollar-sign">
           {contrato.pagamento && contrato.pagamento.length > 0 ? (
             contrato.pagamento.map((item) => (
               <View key={item.id_pagamento} style={styles.subCard}>
@@ -457,11 +463,11 @@ useEffect(() => {
           )}
         </Card>
 
-        <Card title="Notificações">
+        <Card title="Notificações" icone="bell">
           <View style={styles.notificacaoResumo}>
             <View style={styles.notificacaoInfo}>
               <Text style={styles.notificacaoQuantidade}>
-                {contrato.notificacao?.length || 0} notificações
+                {`${contrato.notificacao?.length || 0} notificações`}
               </Text>
               <Text style={styles.notificacaoDescricao}>
                 Histórico de notificações deste contrato
@@ -476,57 +482,66 @@ useEffect(() => {
             </TouchableOpacity>
           </View>
         </Card>
-        <Card title="Comentários e solicitações">
-     {comentarios.length === 0 ? (
-  <View style={styles.comentarioVazio}>
-    <Feather name="message-circle" size={30} color="#999" />
-    <Text style={styles.comentarioVazioTexto}>
-      Nenhum comentário registrado.
-    </Text>
-  </View>
-) : (
-  comentarios.map((item) => (
-    <View key={item.id_comentario} style={styles.comentarioVazio}>
-      <Text style={styles.label}>
-        {new Date(item.data_criacao).toLocaleString("pt-BR")}
-      </Text>
 
-      <Text style={styles.comentarioVazioTexto}>
-        {item.comentario}
-      </Text>
+        <Card title="Comentários e solicitações" icone="message-square">
+          {comentarios.length === 0 ? (
+            <View style={styles.comentarioVazio}>
+              <Feather name="message-circle" size={30} color="#999" />
+              <Text style={styles.comentarioVazioTexto}>
+                Nenhum comentário registrado.
+              </Text>
+            </View>
+          ) : (
+            comentarios.map((item) => (
+              <View key={item.id_comentario} style={styles.comentarioVazio}>
+                <Text style={styles.label}>
+                  {item.data_criacao
+                    ? new Date(item.data_criacao).toLocaleString("pt-BR")
+                    : "Data não informada"}
+                </Text>
 
-      <Text style={styles.label}>
-        Status: {item.status}
-      </Text>
-    </View>
-  ))
-)}
+                <Text style={styles.comentarioVazioTexto}>
+                  {item.comentario}
+                </Text>
 
-  <Text style={styles.label}>Novo comentário</Text>
+                <Text style={styles.label}>
+                  {`Status: ${item.status ?? "Não informado"}`}
+                </Text>
+              </View>
+            ))
+          )}
 
-  <TextInput
-    style={styles.inputComentario}
-    placeholder="Descreva sua solicitação ou observação..."
-    placeholderTextColor="#999"
-    multiline
-    numberOfLines={5}
-    textAlignVertical="top"
-    value={novoComentario}
-    onChangeText={setNovoComentario}
-  />
+          <Text style={styles.label}>Novo comentário</Text>
 
-  <TouchableOpacity
-    style={styles.botaoComentario}
-    onPress={enviarComentario}
-    disabled={enviandoComentario}
-    
-  >
-    <Feather name="send" size={17} color="#FFFFFF" />
-    <Text style={styles.textoBotaoComentario}>
-      Enviar comentário
-    </Text>
-  </TouchableOpacity>
-</Card>
+          <TextInput
+            style={styles.inputComentario}
+            placeholder="Descreva sua solicitação ou observação..."
+            placeholderTextColor="#999"
+            multiline
+            numberOfLines={5}
+            textAlignVertical="top"
+            value={novoComentario}
+            onChangeText={setNovoComentario}
+          />
+
+          <TouchableOpacity
+            style={[
+              styles.botaoComentario,
+              enviandoComentario && styles.botaoDesabilitado,
+            ]}
+            onPress={enviarComentario}
+            disabled={enviandoComentario}
+          >
+            {enviandoComentario ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <Feather name="send" size={17} color="#FFFFFF" />
+            )}
+            <Text style={styles.textoBotaoComentario}>
+              {enviandoComentario ? "Enviando..." : "Enviar comentário"}
+            </Text>
+          </TouchableOpacity>
+        </Card>
 
         <Modal
           visible={mostrarHistorico}
@@ -537,9 +552,7 @@ useEffect(() => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalHistorico}>
               <View style={styles.modalCabecalho}>
-                <Text style={styles.modalTitulo}>
-                  Histórico de notificações
-                </Text>
+                <Text style={styles.modalTitulo}>Histórico de notificações</Text>
 
                 <TouchableOpacity
                   onPress={() => setMostrarHistorico(false)}
@@ -559,16 +572,14 @@ useEffect(() => {
                       key={item.id_notificacao}
                       style={styles.subCardNotificacao}
                     >
-                      <Item
-                        label="Tipo"
-                        value={item.tipo_notificacao?.tipo}
-                      />
+                      <Item label="Tipo" value={item.tipo_notificacao?.tipo} />
                       <Item label="Título" value={item.titulo} />
                       <Item label="Descrição" value={item.descricao} />
                       <Item
                         label="Tempo para envio"
                         value={
-                          item.tempo_envio !== null
+                          item.tempo_envio !== null &&
+                          item.tempo_envio !== undefined
                             ? `${item.tempo_envio} dias`
                             : null
                         }
@@ -583,15 +594,10 @@ useEffect(() => {
                   <Text style={styles.semInformacao}>
                     Nenhuma notificação registrada.
                   </Text>
-
-                  
                 )}
               </ScrollView>
             </View>
           </View>
-
-
-
         </Modal>
       </ScrollView>
     </PesquisaContext.Provider>
@@ -601,13 +607,19 @@ useEffect(() => {
 function Card({
   title,
   children,
+  icone,
 }: {
   title: string;
   children: React.ReactNode;
+  icone?: React.ComponentProps<typeof Feather>["name"];
 }) {
   return (
     <View style={styles.card}>
-      <Text style={styles.secaoTitulo}>{title}</Text>
+      <View style={styles.tituloComIcone}>
+        {icone ? <Feather name={icone} size={25} color="#006C5B" /> : null}
+        <Text style={styles.secaoTitulo}>{title}</Text>
+      </View>
+
       {children}
     </View>
   );
@@ -631,18 +643,49 @@ function Item({
   return (
     <View style={styles.item}>
       <Text style={styles.label}>{label}</Text>
-      
-<Text
-  style={[
-    styles.valor,
-    label === "Objeto do contrato" && styles.objetoJustificado,
-  ]}
->
-  {value !== null && value !== undefined && value !== ""
-    ? String(value)
-    : "Não informado"}
-</Text>
+      <Text
+        style={[
+          styles.valor,
+          label === "Objeto do contrato" && styles.objetoJustificado,
+        ]}
+      >
+        {value !== null && value !== undefined && value !== ""
+          ? String(value)
+          : "Não informado"}
+      </Text>
+    </View>
+  );
+}
 
+function LinkItem({
+  label,
+  texto,
+  link,
+  onPress,
+}: {
+  label: string;
+  texto: string;
+  link: string | null | undefined;
+  onPress: (link: string) => void;
+}) {
+  const pesquisa = usePesquisa().trim().toLowerCase();
+  const linkLimpo = typeof link === "string" ? link.trim() : "";
+
+  if (!linkLimpo) return null;
+
+  const corresponde =
+    pesquisa === "" ||
+    label.toLowerCase().includes(pesquisa) ||
+    texto.toLowerCase().includes(pesquisa);
+
+  if (!corresponde) return null;
+
+  return (
+    <View style={styles.item}>
+      <Text style={styles.label}>{label}</Text>
+      <TouchableOpacity onPress={() => onPress(linkLimpo)}>
+        <Text style={styles.linkTexto}>{texto}</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -712,12 +755,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#006C5B",
-    marginBottom: 15,
-  },
-  cardTitulo: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
   },
   item: {
     marginBottom: 12,
@@ -736,35 +773,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 10,
-  },
-  statusAtivo: {
-    backgroundColor: "#39c172",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    alignSelf: "flex-start",
-    marginBottom: 15,
-  },
-  statusVencido: {
-    backgroundColor: "#e53935",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    alignSelf: "flex-start",
-    marginBottom: 15,
-  },
-  statusPendente: {
-    backgroundColor: "#f5ba18",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    alignSelf: "flex-start",
-    marginBottom: 15,
-  },
-  statusText: {
-    color: "white",
-    fontSize: 12,
-    fontWeight: "bold",
   },
   semInformacao: {
     color: "#777",
@@ -867,57 +875,60 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   objetoJustificado: {
-  textAlign: "justify",
-  lineHeight: 22,
-},
-
-comentarioVazio: {
-  alignItems: "center",
-  justifyContent: "center",
-  backgroundColor: "#F5F3F4",
-  borderRadius: 8,
-  padding: 20,
-  marginBottom: 20,
-},
-
-comentarioVazioTexto: {
-  color: "#777",
-  fontSize: 14,
-  marginTop: 10,
-},
-
-inputComentario: {
-  minHeight: 120,
-  borderWidth: 1,
-  borderColor: "#ccc",
-  borderRadius: 8,
-  padding: 12,
-  fontSize: 14,
-  color: "#333",
-  marginTop: 8,
-  marginBottom: 15,
-},
-
-botaoComentario: {
-  backgroundColor: "#006C5B",
-  padding: 14,
-  borderRadius: 8,
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: 8,
-},
-
-textoBotaoComentario: {
-  color: "#FFFFFF",
-  fontWeight: "600",
-  fontSize: 14,
-},
-linkTexto: {
-  color: "#006C5B",
-  textDecorationLine: "underline",
-  fontSize: 14,
-  marginTop: 4,
-},
-
+    textAlign: "justify",
+    lineHeight: 22,
+  },
+  comentarioVazio: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F5F3F4",
+    borderRadius: 8,
+    padding: 20,
+    marginBottom: 20,
+  },
+  comentarioVazioTexto: {
+    color: "#777",
+    fontSize: 14,
+    marginTop: 10,
+  },
+  inputComentario: {
+    minHeight: 120,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 14,
+    color: "#333",
+    marginTop: 8,
+    marginBottom: 15,
+  },
+  botaoComentario: {
+    backgroundColor: "#006C5B",
+    padding: 14,
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  botaoDesabilitado: {
+    opacity: 0.6,
+  },
+  textoBotaoComentario: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  linkTexto: {
+    color: "#006C5B",
+    textDecorationLine: "underline",
+    fontSize: 14,
+    marginTop: 4,
+  },
+  tituloComIcone: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 15,
+  },
 });
