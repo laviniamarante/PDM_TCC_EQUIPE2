@@ -1,8 +1,20 @@
+import Feather from "@expo/vector-icons/Feather";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  type ComponentRef,
+} from "react";
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
   Linking,
   Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,9 +22,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { createContext, useContext, useEffect, useState } from "react";
 import { supabase, supabaseFetch } from "../lib/supabase";
 
 interface Contrato {
@@ -104,6 +113,7 @@ const usePesquisa = () => useContext(PesquisaContext);
 
 export default function DetalhesContrato() {
   const router = useRouter();
+  const scrollRef = useRef<ComponentRef<typeof ScrollView> | null>(null);
   const { id, origem } = useLocalSearchParams();
   const [contrato, setContrato] = useState<Contrato | null>(null);
   const [carregando, setCarregando] = useState(true);
@@ -230,7 +240,7 @@ export default function DetalhesContrato() {
       console.log("Erro ao enviar comentário:", erro);
       Alert.alert(
         "Erro",
-        "Não foi possível enviar o comentário. Verifique sua conexão e tente novamente."
+        "Não foi possível enviar o comentário."
       );
     } finally {
       setEnviandoComentario(false);
@@ -278,10 +288,18 @@ export default function DetalhesContrato() {
 
   return (
     <PesquisaContext.Provider value={pesquisa}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={true}
+      <KeyboardAvoidingView
+        style={styles.keyboardWrapper}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={0}
       >
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={true}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
         <View style={styles.topBar} />
 
         <View style={styles.header}>
@@ -522,6 +540,11 @@ export default function DetalhesContrato() {
             textAlignVertical="top"
             value={novoComentario}
             onChangeText={setNovoComentario}
+            onFocus={() => {
+              setTimeout(() => {
+                scrollRef.current?.scrollToEnd({ animated: true });
+              }, 300);
+            }}
           />
 
           <TouchableOpacity
@@ -599,7 +622,8 @@ export default function DetalhesContrato() {
             </View>
           </View>
         </Modal>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </PesquisaContext.Provider>
   );
 }
@@ -691,6 +715,10 @@ function LinkItem({
 }
 
 const styles = StyleSheet.create({
+  keyboardWrapper: {
+    flex: 1,
+    backgroundColor: "#F5F3F4",
+  },
   container: {
     backgroundColor: "#F5F3F4",
     alignItems: "center",
@@ -892,7 +920,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   inputComentario: {
-    minHeight: 120,
+    minHeight: 110,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
@@ -901,6 +929,7 @@ const styles = StyleSheet.create({
     color: "#333",
     marginTop: 8,
     marginBottom: 15,
+    backgroundColor: "#FFFFFF",
   },
   botaoComentario: {
     backgroundColor: "#006C5B",
