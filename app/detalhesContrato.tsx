@@ -336,10 +336,10 @@ export default function DetalhesContrato() {
           ) : null}
         </View>
 
-        <Card title="Identificação do contrato" icone="file-text">
-          <Item label="Nome da contratada" value={contrato.empresa?.nome_contratada} />
-          <Item label="Objeto do contrato" value={contrato.objeto_contrato} />
-          <Item label="Identificador do contrato" value={contrato.identificador_contrato} />
+        <Card title="Identificação do Contrato" icone="file-text">
+          <Item label="Nome da Contratada" value={contrato.empresa?.nome_contratada} />
+          <Item label="Objeto do Contrato" value={contrato.objeto_contrato} />
+          <Item label="Identificador do Contrato" value={contrato.identificador_contrato} />
           <Item
             label="Vigência"
             value={
@@ -348,11 +348,11 @@ export default function DetalhesContrato() {
                 : null
             }
           />
-          <Item label="Data de início" value={formatarData(contrato.data_inicio)} />
-          <Item label="Data de fim" value={formatarData(contrato.data_fim)} />
+          <Item label="Data de Início" value={formatarData(contrato.data_inicio)} />
+          <Item label="Data de Fim" value={formatarData(contrato.data_fim)} />
           <Item label="Prorrogável" value={formatarBooleano(contrato.prorrogavel)} />
           <Item
-            label="Prazo restante"
+            label="Prazo Restante"
             value={
               contrato.prazo_restante !== null &&
               contrato.prazo_restante !== undefined
@@ -360,12 +360,12 @@ export default function DetalhesContrato() {
                 : null
             }
           />
-          <Item label="Data de celebração" value={formatarData(contrato.data_celebracao)} />
-          <Item label="Representante legal" value={contrato.representante_legal} />
+          <Item label="Data de Celebração" value={formatarData(contrato.data_celebracao)} />
+          <Item label="Representante Legal" value={contrato.representante_legal} />
         </Card>
 
         <Card title="Empresa" icone="briefcase">
-          <Item label="Nome contratada" value={contrato.empresa?.nome_contratada} />
+          <Item label="Natureza do Contrato" value={contrato.empresa?.natureza_contrato} />
           <Item label="CNPJ" value={contrato.empresa?.cnpj} />
           <Item label="E-mail" value={contrato.empresa?.email} />
           <Item label="Telefone" value={contrato.empresa?.telefone} />
@@ -373,17 +373,17 @@ export default function DetalhesContrato() {
         </Card>
 
         <Card title="Classificação" icone="briefcase">
-          <Item label="Situação do contrato" value={contrato.situacao_contrato?.situacao} />
-          <Item label="Situação no governo" value={contrato.situacao_gov} />
-          <Item label="Natureza do contrato" value={contrato.empresa?.natureza_contrato} />
+          <Item label="Situação do Contrato" value={contrato.situacao_contrato?.situacao} />
+          <Item label="Situação no Gov" value={contrato.situacao_gov} />
+          <Item label="Natureza do Contrato" value={contrato.empresa?.natureza_contrato} />
         </Card>
 
-        <Card title="Processos e documentos" icone="link">
-          <Item label="Número do processo de celebração" value={contrato.numero_processo_celebracao} />
-          <Item label="Nota de empenho" value={contrato.nota_empenho} />
-          <Item label="Dados da licitação" value={contrato.dados_licitacao} />
-          <Item label="Processo de gestão" value={contrato.processo_gestao} />
-          <Item label="Portaria de fiscalização" value={contrato.portaria_fiscalizacao} />
+        <Card title="Processos e Documentos" icone="link">
+          <Item label="Número do Processo de Celebração" value={contrato.numero_processo_celebracao} />
+          <Item label="Nota de Empenho" value={contrato.nota_empenho} />
+          <Item label="Dados da Licitação" value={contrato.dados_licitacao} />
+          <Item label="Processo de Gestão" value={contrato.processo_gestao} />
+          <Item label="Portaria de Fiscalização" value={contrato.portaria_fiscalizacao} />
 
           <LinkItem
             label="Link da pasta de gestão"
@@ -405,43 +405,43 @@ export default function DetalhesContrato() {
           />
         </Card>
 
-        <Card title="Fiscalização e gestão" icone="user">
-          <Item label="Fiscal titular" value={contrato.fiscal_titular} />
-          <Item label="Fiscal substituto" value={contrato.fiscal_substituto} />
-          <Item label="Gestor titular" value={contrato.gestor_titular} />
-          <Item label="Gestor substituto" value={contrato.gestor_substituto} />
+        <Card title="Fiscalização e Gestão" icone="user">
+          <Item label="Fiscal Titular" value={contrato.fiscal_titular} />
+          <Item label="Fiscal Substituto" value={contrato.fiscal_substituto} />
+          <Item label="Gestor Titular" value={contrato.gestor_titular} />
+          <Item label="Gestor Substituto" value={contrato.gestor_substituto} />
         </Card>
 
-        <Card title="Valores e orçamento" icone="dollar-sign">
-          <Item label="Valor global" value={formatarValor(contrato.valor_global)} />
-          <Item label="Valor mensal" value={formatarValor(contrato.valor_mensal)} />
-          <Item label="Fonte de recurso" value={contrato.fonte_recurso} />
-          <Item label="Natureza da despesa" value={contrato.natureza_despesa} />
-          <Item label="Número do evento" value={contrato.numero_evento} />
+        <Card title="Valores e Orçamento" icone="dollar-sign">
+          <Item label="Valor Global" value={formatarValor(contrato.valor_global)} />
+          <Item label="Valor Mensal" value={formatarValor(contrato.valor_mensal)} />
+          <Item label="Fonte de Recurso" value={contrato.fonte_recurso} />
+          <Item label="Natureza da Despesa" value={contrato.natureza_despesa} />
+          <Item label="Número do Evento" value={contrato.numero_evento} />
           <Item label="UASG" value={contrato.uasg} />
-          <Item label="Plano interno" value={contrato.plano_interno} />
-          <Item label="Programa de trabalho" value={contrato.programa_trabalho} />
-          <Item label="Conta vinculada" value={contrato.conta_vinculada} />
+          <Item label="Plano Interno" value={contrato.plano_interno} />
+          <Item label="Programa de Trabalho" value={contrato.programa_trabalho} />
+          <Item label="Conta Vinculada" value={contrato.conta_vinculada} />
         </Card>
 
         <Card title="Verba" icone="dollar-sign">
           <Item label="Descrição" value={contrato.verba?.descricao} />
           <Item
-            label="Valor disponível"
+            label="Valor Disponível"
             value={formatarValor(contrato.verba?.valor_disponivel)}
           />
           <Item
-            label="Valor utilizado"
+            label="Valor Utilizado"
             value={formatarValor(contrato.verba?.valor_utilizado)}
           />
         </Card>
 
-        <Card title="Representante legal" icone="user">
+        <Card title="Representante Legal" icone="user">
           <Item label="Nome" value={contrato.representante_legal} />
           <Item label="CPF" value={contrato.cpf_representante} />
           <Item label="RG" value={contrato.rg_representante} />
           <Item label="E-mail de contato" value={contrato.email_contato} />
-          <Item label="Endereço postal" value={contrato.endereco_postal} />
+          <Item label="Endereço Postal" value={contrato.endereco_postal} />
         </Card>
 
         <Card title="Prorrogações" icone="calendar">
@@ -449,14 +449,14 @@ export default function DetalhesContrato() {
             contrato.prorrogacao.map((item) => (
               <View key={item.id_prorrogacao} style={styles.subCard}>
                 <Item
-                  label="Novo prazo"
+                  label="Novo Prazo"
                   value={
                     item.novo_prazo !== null && item.novo_prazo !== undefined
                       ? `${item.novo_prazo} meses`
                       : null
                   }
                 />
-                <Item label="Novo valor" value={formatarValor(item.novo_valor)} />
+                <Item label="Novo Valor" value={formatarValor(item.novo_valor)} />
               </View>
             ))
           ) : (
@@ -471,7 +471,7 @@ export default function DetalhesContrato() {
             contrato.pagamento.map((item) => (
               <View key={item.id_pagamento} style={styles.subCard}>
                 <Item label="Descrição" value={item.descricao} />
-                <Item label="Valor pago" value={formatarValor(item.valor_pago)} />
+                <Item label="Valor Pago" value={formatarValor(item.valor_pago)} />
               </View>
             ))
           ) : (
@@ -501,7 +501,7 @@ export default function DetalhesContrato() {
           </View>
         </Card>
 
-        <Card title="Comentários e solicitações" icone="message-square">
+        <Card title="Comentários e Solicitações" icone="message-square">
           {comentarios.length === 0 ? (
             <View style={styles.comentarioVazio}>
               <Feather name="message-circle" size={30} color="#999" />
